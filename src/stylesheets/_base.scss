@@ -1,0 +1,11 @@
+html {
+	font-size: 18px;
+	font-family: Avenir, sans-serif;
+	* {
+		box-sizing: border-box;
+	}
+	:focus {
+		outline: none;
+	}
+}
+

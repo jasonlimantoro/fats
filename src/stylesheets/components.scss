@@ -1,0 +1,15 @@
+.btn {
+  @apply rounded py-2 px-4 cursor-pointer;
+  &:focus {
+    @apply outline-none shadow-outline;
+  }
+}
+.btn-indigo {
+  @apply bg-indigo-500 text-white;
+  &:hover {
+    @apply bg-indigo-400;
+  }
+  &:active {
+    @apply bg-indigo-700;
+  }
+}
