@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
+import { BrowserRouter as Router } from 'react-router-dom';
 import rootReducer from 'modules';
 import createStore from 'store/createStore';
 import App from 'routes';
@@ -8,7 +9,9 @@ import App from 'routes';
 const Root = ({ config }) => {
   return (
     <Provider store={config.reduxStore}>
-      <App />
+      <Router>
+        <App />
+      </Router>
     </Provider>
   );
 };
