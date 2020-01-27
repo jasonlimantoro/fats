@@ -23,3 +23,6 @@ npm-debug.log*
 # Editor/IDE
 .idea
 packages/api/etc/
+
+# others
+*.cache
