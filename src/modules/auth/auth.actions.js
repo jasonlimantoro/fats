@@ -1,8 +1,6 @@
-import { fromJS } from 'immutable';
 import { tryCatch } from 'lib/utils';
 import MockUtilService from 'lib/services/mock';
 import { routes } from 'config/routes';
-import { reverse } from 'named-urls';
 import AuthService from './auth.service';
 import { actionTypes } from './auth.constants';
 
@@ -17,17 +15,23 @@ export const login = (body, history) => async dispatch => {
     successFn(response) {
       dispatch({
         type: actionTypes.LOGIN_SUCCESS,
-        payload: fromJS(response),
+        payload: {
+          ...response,
+          domain: body.domain,
+        },
       });
-      history.push(reverse(routes.panel, { domain: body.domain }));
+      history.push(routes.panel[body.domain]);
     },
     errorFn(err) {
       dispatch({
         type: actionTypes.LOGIN_FAILURE,
-        payload: fromJS(err),
+        payload: err,
       });
     },
   });
 };
 
-export const logout = () => {};
+export const logout = history => async dispatch => {
+  dispatch({ type: actionTypes.LOGOUT });
+  history.push(routes.login);
+};

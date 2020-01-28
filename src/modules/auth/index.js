@@ -1,1 +1,1 @@
-export { default } from './auth.reducer';
+export { default } from './reducers';

@@ -2,7 +2,6 @@ import React from 'react';
 import { renderer } from 'tests/utils/renderer';
 import { fireEvent, waitForElement, wait } from '@testing-library/react';
 import { routes } from 'config/routes';
-import { reverse } from 'named-urls';
 import mockAxios from 'axios';
 import App from 'routes';
 
@@ -66,9 +65,7 @@ describe('Login', () => {
     });
     fireEvent.click(getByTestId('login'));
     await wait(() => {
-      expect(history.location.pathname).toEqual(
-        reverse(routes.panel, { domain: 'admin' }),
-      );
+      expect(history.location.pathname).toEqual(routes.panel.admin);
     });
   });
 });
