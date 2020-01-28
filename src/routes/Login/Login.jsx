@@ -14,12 +14,12 @@ const inputClass =
 const selectClass =
   'block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 rounded focus:outline-none focus:bg-white focus:border-gray-500';
 
-const Login = ({ login, loading, error }) => {
+const Login = ({ login, loading, error, history }) => {
   const form = useFormik({
     initialValues,
     validationSchema,
     onSubmit: values => {
-      login(values);
+      login(values, history);
     },
   });
   const [showAlert, setShowAlert] = React.useState(false);
@@ -142,6 +142,7 @@ const Login = ({ login, loading, error }) => {
 };
 
 Login.propTypes = {
+  history: PropTypes.object.isRequired,
   login: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   error: PropTypes.object.isRequired,

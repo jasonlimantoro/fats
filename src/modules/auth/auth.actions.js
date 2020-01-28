@@ -1,11 +1,17 @@
-import AuthService from '@/auth/auth.service';
 import { fromJS } from 'immutable';
-import { actionTypes } from './auth.constants';
 import { tryCatch } from 'lib/utils';
+import MockUtilService from 'lib/services/mock';
+import { routes } from 'config/routes';
+import { reverse } from 'named-urls';
+import AuthService from './auth.service';
+import { actionTypes } from './auth.constants';
 
-const service = new AuthService({ baseUrl: '/api/auth' });
+const service = new AuthService({
+  baseUrl: '/api/auth',
+  RequestUtil: MockUtilService,
+});
 
-export const login = body => async dispatch => {
+export const login = (body, history) => async dispatch => {
   dispatch({ type: actionTypes.LOGIN_BEGIN, payload: body });
   await tryCatch(() => service.login(body), {
     successFn(response) {
@@ -13,6 +19,7 @@ export const login = body => async dispatch => {
         type: actionTypes.LOGIN_SUCCESS,
         payload: fromJS(response),
       });
+      history.push(reverse(routes.panel, { domain: body.domain }));
     },
     errorFn(err) {
       dispatch({

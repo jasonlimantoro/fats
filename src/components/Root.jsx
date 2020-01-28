@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
-import rootReducer, { history } from 'modules';
+import rootReducer from 'modules';
 import createStore from 'store/createStore';
-import { ConnectedRouter } from 'connected-react-router';
+import { BrowserRouter } from 'react-router-dom';
 import App from 'routes';
 
 const Root = ({ config }) => {
   return (
     <Provider store={config.reduxStore}>
-      <ConnectedRouter history={config.history}>
+      <BrowserRouter>
         <App />
-      </ConnectedRouter>
+      </BrowserRouter>
     </Provider>
   );
 };
@@ -30,7 +30,6 @@ Root.propTypes = {
 Root.defaultProps = {
   config: {
     reduxStore,
-    history,
   },
 };
 
