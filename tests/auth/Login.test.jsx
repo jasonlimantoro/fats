@@ -1,7 +1,8 @@
 import React from 'react';
 import { renderer } from 'tests/utils/renderer';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitForElement, wait } from '@testing-library/react';
 import { routes } from 'config/routes';
+import { reverse } from 'named-urls';
 import mockAxios from 'axios';
 import App from 'routes';
 
@@ -33,7 +34,41 @@ describe('Login', () => {
       },
     });
     fireEvent.click(getByTestId('login'));
+    await wait(() => expect(mockAxios.post).toBeCalled());
     await waitForElement(() => getByText('Invalid credentials'));
   });
-  it('should redirect to panel based on the domain', () => {});
+  it('should redirect to panel based on the domain', async () => {
+    mockAxios.post.mockImplementationOnce(() =>
+      Promise.resolve({
+        data: {
+          id: '12',
+          token: 'some-token',
+        },
+      }),
+    );
+    const { getByLabelText, getByTestId, history } = renderer(<App />, {
+      route: routes.login,
+    });
+    fireEvent.change(getByLabelText('Username'), {
+      target: {
+        value: 'john',
+      },
+    });
+    fireEvent.change(getByLabelText('Password'), {
+      target: {
+        value: 'pass',
+      },
+    });
+    fireEvent.change(getByLabelText('Domain'), {
+      target: {
+        value: 'admin',
+      },
+    });
+    fireEvent.click(getByTestId('login'));
+    await wait(() => {
+      expect(history.location.pathname).toEqual(
+        reverse(routes.panel, { domain: 'admin' }),
+      );
+    });
+  });
 });
