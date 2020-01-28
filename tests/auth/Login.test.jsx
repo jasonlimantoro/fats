@@ -1,7 +1,8 @@
 import React from 'react';
 import { renderer } from 'tests/utils/renderer';
-import { fireEvent } from '@testing-library/react';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { routes } from 'config/routes';
+import mockAxios from 'axios';
 import App from 'routes';
 
 describe('Login', () => {
@@ -14,6 +15,25 @@ describe('Login', () => {
     fireEvent.blur(getByLabelText('Password'));
     expect(await findAllByText(/required/i)).toHaveLength(2);
   });
-  it('should display error when the backend API returns error', () => {});
+  it('should display error when the backend API returns error', async () => {
+    mockAxios.post.mockImplementationOnce(() =>
+      Promise.reject(new Error('Invalid credentials')),
+    );
+    const { getByLabelText, getByTestId, getByText } = renderer(<App />, {
+      route: routes.login,
+    });
+    fireEvent.change(getByLabelText('Username'), {
+      target: {
+        value: 'john',
+      },
+    });
+    fireEvent.change(getByLabelText('Password'), {
+      target: {
+        value: 'pass',
+      },
+    });
+    fireEvent.click(getByTestId('login'));
+    await waitForElement(() => getByText('Invalid credentials'));
+  });
   it('should redirect to panel based on the domain', () => {});
 });

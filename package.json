@@ -45,6 +45,7 @@
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
+    "serialize-error": "^5.0.0",
     "tailwindcss": "^1.1.4",
     "yup": "^0.28.0"
   },

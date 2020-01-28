@@ -1,5 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useFormik } from 'formik';
+import { connect } from 'react-redux';
+import { login } from '@/auth/auth.actions';
+import { selectLoginStatus } from '@/auth/auth.selector';
+import Alert from 'components/Alert';
 import cls from 'classnames';
 import { validationSchema, initialValues, domains } from './schema';
 
@@ -9,14 +14,24 @@ const inputClass =
 const selectClass =
   'block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 rounded focus:outline-none focus:bg-white focus:border-gray-500';
 
-const Login = () => {
+const Login = ({ login, loading, error }) => {
   const form = useFormik({
     initialValues,
     validationSchema,
     onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
+      login(values);
     },
   });
+  const [showAlert, setShowAlert] = React.useState(false);
+  const onClose = React.useCallback(() => {
+    setShowAlert(false);
+  }, []);
+  React.useEffect(
+    () => {
+      setShowAlert(!!error.message);
+    },
+    [error],
+  );
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
       <p className="font-bold text-3xl">Login</p>
@@ -26,6 +41,10 @@ const Login = () => {
         autoComplete="off"
         className="bg-white rounded px-8 pt-6 pb-8 mb-4 w-1/3"
       >
+        <Alert show={showAlert} title="Oh Snap!" type="error" onClose={onClose}>
+          <Alert.Title>Oh Snap!</Alert.Title>
+          <Alert.Body>{error.message}</Alert.Body>
+        </Alert>
         <div className="mb-4">
           <label className={labelClass} htmlFor="username">
             Username
@@ -109,7 +128,12 @@ const Login = () => {
             <p className="text-red-500 italic text-xs">{form.errors.domain}</p>
           )}
         </div>
-        <button className="btn btn-indigo w-full" type="submit">
+        <button
+          className="btn btn-indigo w-full"
+          type="submit"
+          disabled={loading}
+          data-testid="login"
+        >
           Login
         </button>
       </form>
@@ -117,8 +141,17 @@ const Login = () => {
   );
 };
 
-Login.propTypes = {};
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.object.isRequired,
+};
 
 Login.defaultProps = {};
 
-export default Login;
+export default connect(
+  state => ({
+    ...selectLoginStatus(state),
+  }),
+  { login },
+)(Login);
