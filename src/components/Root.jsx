@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
-import rootReducer from 'modules';
+import rootReducer, { history } from 'modules';
 import createStore from 'store/createStore';
+import { ConnectedRouter } from 'connected-react-router';
 import App from 'routes';
 
 const Root = ({ config }) => {
   return (
     <Provider store={config.reduxStore}>
-      <Router>
+      <ConnectedRouter history={config.history}>
         <App />
-      </Router>
+      </ConnectedRouter>
     </Provider>
   );
 };
@@ -23,12 +23,14 @@ Root.propTypes = {
    */
   config: PropTypes.shape({
     reduxStore: PropTypes.object,
+    history: PropTypes.object,
   }),
 };
 
 Root.defaultProps = {
   config: {
     reduxStore,
+    history,
   },
 };
 
