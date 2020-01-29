@@ -10,3 +10,13 @@ export const tryCatch = async (
     return errorFn(e);
   }
 };
+
+export class ScopedKey {
+  constructor(scope) {
+    this.scope = scope;
+    this.loading = `${scope}Loading`;
+    this.response = `${scope}Response`;
+    this.error = `${scope}Error`;
+    this.loaded = `${scope}Loaded`;
+  }
+}

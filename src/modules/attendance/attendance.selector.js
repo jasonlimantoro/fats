@@ -6,3 +6,9 @@ export const selectAttendances = createSelector(
   state => state.attendance.get(listScope.response),
   state => state.toJS(),
 );
+
+export const createSelectFirstNAttendances = n =>
+  createSelector(
+    selectAttendances,
+    state => state.slice(0, n),
+  );
