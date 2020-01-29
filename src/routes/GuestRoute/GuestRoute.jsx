@@ -7,7 +7,7 @@ import { selectIsLoggedIn, selectUser } from '@/auth/auth.selector';
 
 const GuestRoute = ({ isLoggedIn, user, ...rest }) => {
   if (isLoggedIn) {
-    return <Redirect to={routes.panel[user.domain]} />;
+    return <Redirect to={routes.panel[user.domain].overview} />;
   }
   return <Route {...rest} />;
 };
