@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import brand from 'images/sample-brand.svg';
 import { NavLink } from 'react-router-dom';
 import cls from 'classnames';
 
@@ -10,10 +9,10 @@ const Navbar = ({ onLogout, user, quickLinks, match }) => {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   return (
     <header className="bg-gray-800 text-white sm:flex sm:justify-between items-center py-3 px-4">
-      <div className="bg-gray-800 flex justify-between items-center">
-        <div className="cursor-pointer">
-          <img className="h-10" src={brand} alt="brand-logo" />
-        </div>
+      <div
+        className="bg-gray-800 flex justify-between items-center"
+        style={{ height: 45 }}
+      >
         <div className="sm:hidden">
           <button
             onClick={() => setNavbarOpen(prev => !prev)}
