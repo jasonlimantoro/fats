@@ -1,9 +1,20 @@
 import React from 'react';
 import { renderer } from 'tests/utils/renderer';
 import { fireEvent, waitForElement, wait } from '@testing-library/react';
-import { routes } from 'config/routes';
-import mockAxios from 'axios';
+import { routes, apiRoutes } from 'config/routes';
+import { Response } from 'miragejs';
+import { startMirage } from 'lib/mirage';
 import App from 'routes';
+
+let server;
+
+beforeEach(() => {
+  server = startMirage({ environment: 'test' });
+});
+
+afterEach(() => {
+  server.shutdown();
+});
 
 describe('Login', () => {
   it('should validate invalid inputs', async () => {
@@ -16,8 +27,9 @@ describe('Login', () => {
     expect(await findAllByText(/required/i)).toHaveLength(2);
   });
   it('should display error when the backend API returns error', async () => {
-    mockAxios.post.mockImplementationOnce(() =>
-      Promise.reject(new Error('Invalid credentials')),
+    server.post(
+      apiRoutes.auth.login,
+      () => new Response(400, {}, { message: 'Invalid credentials' }),
     );
     const { getByLabelText, getByTestId, getByText } = renderer(<App />, {
       route: routes.login,
@@ -33,18 +45,9 @@ describe('Login', () => {
       },
     });
     fireEvent.click(getByTestId('login'));
-    await wait(() => expect(mockAxios.post).toBeCalled());
-    await waitForElement(() => getByText('Invalid credentials'));
+    await waitForElement(() => getByText(/failed/i));
   });
   it('should redirect to panel based on the domain', async () => {
-    mockAxios.post.mockImplementationOnce(() =>
-      Promise.resolve({
-        data: {
-          id: '12',
-          token: 'some-token',
-        },
-      }),
-    );
     const { getByLabelText, getByTestId, history } = renderer(<App />, {
       route: routes.login,
     });

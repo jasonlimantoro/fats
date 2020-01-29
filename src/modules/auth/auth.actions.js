@@ -1,12 +1,10 @@
 import { tryCatch } from 'lib/utils';
-import MockUtilService from 'lib/services/mock';
 import { routes } from 'config/routes';
 import AuthService from './auth.service';
 import { actionTypes } from './auth.constants';
 
 const service = new AuthService({
   baseUrl: '/api/auth',
-  RequestUtil: MockUtilService,
 });
 
 export const login = (body, history) => async dispatch => {
@@ -16,7 +14,7 @@ export const login = (body, history) => async dispatch => {
       dispatch({
         type: actionTypes.LOGIN_SUCCESS,
         payload: {
-          ...response,
+          ...response.data,
           domain: body.domain,
           username: body.username,
         },

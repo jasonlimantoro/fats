@@ -6,6 +6,7 @@ export const routes = {
   panel: include('/panel', {
     student: include('student', {
       overview: 'overview',
+      attendances: 'attendances',
     }),
     admin: include('admin', {
       overview: 'overview',
@@ -13,8 +14,8 @@ export const routes = {
   }),
 };
 
-export const apiRoutes = include('/api', {
+export const apiRoutes = {
   auth: include('auth', {
     login: 'login',
   }),
-});
+};

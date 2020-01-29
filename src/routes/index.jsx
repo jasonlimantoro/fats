@@ -10,7 +10,7 @@ export default () => (
   <Switch>
     <Route exact path={routes.home} component={Home} />
     <GuestRoute path={routes.login} component={Login} />
-    <Route path="/panel" component={Panel} />
+    <Route path={String(routes.panel)} component={Panel} />
     <Redirect to={routes.home} />
   </Switch>
 );
