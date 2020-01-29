@@ -13,3 +13,12 @@
     @apply bg-indigo-700;
   }
 }
+.btn-gray {
+  @apply bg-gray-700 text-white;
+  &:hover {
+    @apply bg-gray-600;
+  }
+  &:active {
+    @apply bg-gray-800;
+  }
+}
