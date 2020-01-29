@@ -1,6 +1,6 @@
 {
   "parser": "babel-eslint",
-  "plugins": ["react", "jest", "prettier"],
+  "plugins": ["react", "jest", "prettier", "react-hooks"],
   "extends": ["airbnb", "prettier", "prettier/react"],
   "globals": {
     "React": true,
@@ -81,6 +81,8 @@
     "react/jsx-key": "error",
     "react/jsx-wrap-multilines": ["warn"],
     "react/jsx-indent-props": 0,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "no-trailing-spaces": [2, { "skipBlankLines": true }],
     "prefer-template": 0,
     "import/prefer-default-export": 0,
