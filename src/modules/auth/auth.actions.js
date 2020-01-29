@@ -18,6 +18,7 @@ export const login = (body, history) => async dispatch => {
         payload: {
           ...response,
           domain: body.domain,
+          username: body.username,
         },
       });
       history.push(routes.panel[body.domain]);
