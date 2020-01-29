@@ -22,7 +22,10 @@
     ],
     "no-console": 2,
     "no-shadow": 0,
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "PropTypes" }
+    ],
     "react/prefer-stateless-function": "warn",
     "react/self-closing-comp": [
       "warn",
