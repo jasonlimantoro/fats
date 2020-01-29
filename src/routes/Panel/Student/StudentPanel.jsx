@@ -1,9 +1,13 @@
 import React from 'react';
-// TODO: Uncomment when decided to use props
-// import PropTypes from 'prop-types';
+import Dashboard from 'layouts/Dashboard';
+import { menus, quickLinks } from './constant';
 
 const StudentPanel = () => {
-  return <div>StudentPanel</div>;
+  return (
+    <Dashboard quickLinks={quickLinks} menus={menus}>
+      Student Panel
+    </Dashboard>
+  );
 };
 
 StudentPanel.propTypes = {};

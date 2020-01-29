@@ -1,9 +1,9 @@
 import React from 'react';
-// TODO: Uncomment when decided to use props
-// import PropTypes from 'prop-types';
+import Dashboard from 'layouts/Dashboard/Dashboard';
+import { menus } from './constant';
 
 const AdminPanel = () => {
-  return <div>AdminPanel</div>;
+  return <Dashboard menus={menus}>Admin Panel</Dashboard>;
 };
 
 AdminPanel.propTypes = {};

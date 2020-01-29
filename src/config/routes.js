@@ -4,8 +4,12 @@ export const routes = {
   home: '/',
   login: '/login',
   panel: include('/panel', {
-    student: 'student',
-    admin: 'admin',
+    student: include('student', {
+      overview: 'overview',
+    }),
+    admin: include('admin', {
+      overview: 'overview',
+    }),
   }),
 };
 

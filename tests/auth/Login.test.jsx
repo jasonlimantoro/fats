@@ -65,7 +65,7 @@ describe('Login', () => {
     });
     fireEvent.click(getByTestId('login'));
     await wait(() => {
-      expect(history.location.pathname).toEqual(routes.panel.admin);
+      expect(history.location.pathname).toEqual(routes.panel.admin.overview);
     });
   });
 });
