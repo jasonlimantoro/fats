@@ -129,7 +129,7 @@ const Login = ({ login, loading, error, history }) => {
           )}
         </div>
         <button
-          className="btn btn-indigo w-full"
+          className="btn btn-gray w-full"
           type="submit"
           disabled={loading}
           data-testid="login"
