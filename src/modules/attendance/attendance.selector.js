@@ -12,3 +12,14 @@ export const createSelectFirstNAttendances = n =>
     selectAttendances,
     state => state.slice(0, n),
   );
+
+export const selectAllAttendancesCount = createSelector(
+  selectAttendances,
+  state => state.length,
+);
+
+// TODO: Update implementation later
+export const selectMissedAttendanceCount = createSelector(
+  selectAttendances,
+  state => state.length,
+);

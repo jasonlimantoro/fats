@@ -5,9 +5,13 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { routes } from 'config/routes';
 import { list } from '@/attendance/attendance.actions';
-import { createSelectFirstNAttendances } from '@/attendance/attendance.selector';
+import {
+  createSelectFirstNAttendances,
+  selectAllAttendancesCount,
+  selectMissedAttendanceCount,
+} from '@/attendance/attendance.selector';
 
-const Overview = ({ list, attendances }) => {
+const Overview = ({ list, recentAttendances, total, missed }) => {
   React.useEffect(
     () => {
       list();
@@ -20,11 +24,11 @@ const Overview = ({ list, attendances }) => {
       <div className="flex my-8">
         <div className="flex-1 mr-2 flex flex-col justify-center bg-gray-800 text-white h-32 py-3 px-4 text-center border rounded shadow-lg">
           <p className="font-semibold text-lg mb-4">Total Lab Attended</p>
-          <p>12</p>
+          <p>{total}</p>
         </div>
         <div className="flex-1 ml-2 flex flex-col justify-center bg-red-700 text-white h-32 py-3 px-4 text-center border rounded shadow-lg">
           <p className="font-semibold text-lg mb-4">Total Lab Missed</p>
-          <p>2</p>
+          <p>{missed}</p>
         </div>
       </div>
       <div className="flex">
@@ -47,7 +51,7 @@ const Overview = ({ list, attendances }) => {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {attendances.map((a, idx) => (
+            {recentAttendances.map((a, idx) => (
               <tr
                 key={a.id}
                 className={cls({
@@ -69,13 +73,17 @@ const Overview = ({ list, attendances }) => {
 
 Overview.propTypes = {
   list: PropTypes.func.isRequired,
-  attendances: PropTypes.array.isRequired,
+  total: PropTypes.number.isRequired,
+  missed: PropTypes.number.isRequired,
+  recentAttendances: PropTypes.array.isRequired,
 };
 
 Overview.defaultProps = {};
 
 const mapStateToProps = () => state => ({
-  attendances: createSelectFirstNAttendances(5)(state),
+  recentAttendances: createSelectFirstNAttendances(5)(state),
+  total: selectAllAttendancesCount(state),
+  missed: selectMissedAttendanceCount(state),
 });
 const mapDispatchToProps = { list };
 
