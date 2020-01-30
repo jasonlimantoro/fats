@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Switch, Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import ProtectedRoute from 'routes/ProtectedRoute';
 import StudentPanel from './Student';
 import AdminPanel from './Admin';
@@ -19,7 +19,6 @@ const Panel = ({ match }) => {
         path={`${url}/admin`}
         component={AdminPanel}
       />
-      <Route render={() => <p>Not Found</p>} />
     </Switch>
   );
 };
