@@ -19,7 +19,7 @@ export const login = (body, history) => async dispatch => {
           username: body.username,
         },
       });
-      history.push(routes.panel[body.domain].overview);
+      history.push(String(routes.panel[body.domain]));
     },
     errorFn(err) {
       dispatch({
