@@ -2,22 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Dashboard from 'layouts/Dashboard';
-import { detail } from '@/schedule/schedule.actions';
-import { selectDetailSchedule } from '@/schedule/schedule.selector';
+import { fetch } from '@/ui/sessionDetail/actions';
+import {
+  selectSessionDetailUI,
+  selectStudentList,
+} from '@/ui/sessionDetail/selector';
 
-const SessionDetail = ({ match, detail, scheduleDetail }) => {
+const SessionDetail = ({ match, fetch, scheduleDetail, studentList }) => {
   const {
     params: { sessionId },
   } = match;
   React.useEffect(
     () => {
-      detail(sessionId);
+      fetch(sessionId);
     },
-    [detail, sessionId],
+    [fetch, sessionId],
   );
   return (
     <div>
-      <Dashboard.Title>Session Detail: {sessionId}</Dashboard.Title>
+      <Dashboard.Title>Session Detail</Dashboard.Title>
       <table className="border-collapse table-auto">
         <thead>
           <tr>
@@ -30,13 +33,13 @@ const SessionDetail = ({ match, detail, scheduleDetail }) => {
         <tbody className="bg-gray-300">
           <tr>
             <td className="border border-gray-400 p-2">
-              {scheduleDetail.lab?.course}
+              {scheduleDetail.course}
             </td>
             <td className="border border-gray-400 p-2">
-              {scheduleDetail.lab?.index}
+              {scheduleDetail.index}
             </td>
             <td className="border border-gray-400 p-2">
-              {scheduleDetail.lab?.name}
+              {scheduleDetail.group}
             </td>
             <td className="border border-gray-400 p-2">
               {scheduleDetail.time}
@@ -44,32 +47,43 @@ const SessionDetail = ({ match, detail, scheduleDetail }) => {
           </tr>
         </tbody>
       </table>
-      <h2 className="text-semibold text-2xl">List of Students</h2>
-      <table className="table-auto">
-        <thead>
-          <tr>
-            <th>Matriculation Number</th>
-            <th>Email</th>
-            <th>Username</th>
-          </tr>
-        </thead>
-      </table>
+      <div className="mt-6">
+        <h2 className="text-semibold text-2xl">List of Students</h2>
+        <table className="table-auto">
+          <thead>
+            <tr>
+              <th>Matriculation Number</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            {studentList.map(s => (
+              <tr key={s.matric}>
+                <td className="border border-gray-400 p-2">{s.matric}</td>
+                <td className="border border-gray-400 p-2">{s.email}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
 SessionDetail.propTypes = {
   match: PropTypes.object,
-  detail: PropTypes.func.isRequired,
+  fetch: PropTypes.func.isRequired,
   scheduleDetail: PropTypes.object.isRequired,
+  studentList: PropTypes.array.isRequired,
 };
 
 SessionDetail.defaultProps = {};
 
 const mapStateToProps = state => ({
-  scheduleDetail: selectDetailSchedule(state),
+  scheduleDetail: selectSessionDetailUI(state),
+  studentList: selectStudentList(state),
 });
-const mapDispatchToProps = { detail };
+const mapDispatchToProps = { fetch };
 
 export default connect(
   mapStateToProps,
