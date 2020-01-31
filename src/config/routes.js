@@ -9,7 +9,9 @@ export const routes = {
       attendances: 'attendances',
     }),
     admin: include('admin/', {
-      sessions: 'sessions',
+      sessions: include('sessions', {
+        detail: ':sessionId',
+      }),
       overview: 'overview',
     }),
   }),
