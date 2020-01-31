@@ -36,6 +36,7 @@
     "jest": "^24.8.0",
     "moment": "^2.24.0",
     "named-urls": "^2.0.0",
+    "normalizr": "^3.5.0",
     "prop-types": "15.7.0",
     "query-string": "^6.4.2",
     "react": "^16.12.0",
