@@ -4,7 +4,7 @@ import AuthService from './auth.service';
 import { actionTypes } from './auth.constants';
 
 const service = new AuthService({
-  baseUrl: '/api/auth',
+  baseUrl: '/api',
 });
 
 export const login = (body, history) => async dispatch => {

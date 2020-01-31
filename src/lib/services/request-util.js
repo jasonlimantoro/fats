@@ -10,7 +10,7 @@ export default class RequestUtilService {
 
   request = ({ method = 'get', path, data, config = {} } = {}) => {
     const finalConfig = this.getConfig(config);
-    const finalPath = `${this.baseUrl}/${path}`;
+    const finalPath = `${this.baseUrl}/${path}/`;
     switch (method) {
       case 'get':
         return axios.get(finalPath, finalConfig);

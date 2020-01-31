@@ -1,5 +1,4 @@
 import { Factory, Model, Server } from 'miragejs';
-import { apiRoutes } from 'config/routes';
 import faker from 'faker';
 import moment from 'moment';
 
@@ -11,12 +10,15 @@ export function startMirage({ environment = 'development' } = {}) {
     environment,
     routes() {
       this.namespace = 'api';
-      this.post(apiRoutes.auth.login, {
-        id: 12,
-        token: 'jwt-token',
+      this.post('/token', {
+        access: 'jwt-token',
       });
       this.get('/attendances', schema => {
         return schema.attendances.all().models;
+      });
+      this.get('/attendances/:id', (schema, request) => {
+        const { id } = request.params;
+        return schema.attendances.find(id).attrs;
       });
     },
     factories: {

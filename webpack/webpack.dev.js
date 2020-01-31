@@ -69,6 +69,13 @@ module.exports = {
     compress: true,
     hot: true,
     disableHostCheck: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   devtool: '#source-map',
   plugins: [
