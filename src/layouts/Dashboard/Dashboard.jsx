@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cls from 'classnames';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -38,6 +39,15 @@ const Dashboard = ({
     </div>
   );
 };
+
+// eslint-disable-next-line react/prop-types
+const Title = ({ children, className }) => (
+  <p className={cls('text-gray-800 text-3xl font-bold', className)}>
+    {children}
+  </p>
+);
+
+Dashboard.Title = Title;
 
 Dashboard.propTypes = {
   user: PropTypes.object.isRequired,
