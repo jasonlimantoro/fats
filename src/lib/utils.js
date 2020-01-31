@@ -11,6 +11,13 @@ export const tryCatch = async (
   }
 };
 
+export const executeIf = (yes, ifNo) => fn => {
+  if (yes) {
+    return fn();
+  }
+  return ifNo();
+};
+
 export class ScopedKey {
   constructor(scope) {
     this.scope = scope;

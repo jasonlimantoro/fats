@@ -82,6 +82,7 @@
       }
     ],
     "no-underscore-dangle": "off",
+    "no-nested-ternary": 0,
     "react/jsx-key": "error",
     "react/jsx-wrap-multilines": ["warn"],
     "react/jsx-indent-props": 0,

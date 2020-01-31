@@ -54,6 +54,8 @@ const SessionDetail = ({ match, fetch, scheduleDetail, studentList }) => {
             <tr>
               <th>Matriculation Number</th>
               <th>Email</th>
+              <th>Status</th>
+              <th>Attendance Time</th>
             </tr>
           </thead>
           <tbody>
@@ -61,6 +63,8 @@ const SessionDetail = ({ match, fetch, scheduleDetail, studentList }) => {
               <tr key={s.matric}>
                 <td className="border border-gray-400 p-2">{s.matric}</td>
                 <td className="border border-gray-400 p-2">{s.email}</td>
+                <td className="border border-gray-400 p-2">{s.status}</td>
+                <td className="border border-gray-400 p-2">{s.time}</td>
               </tr>
             ))}
           </tbody>
