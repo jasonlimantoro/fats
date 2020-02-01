@@ -28,9 +28,7 @@ export const selectStudentList = createSelector(
     const LATE_LIMIT = 15;
 
     return allStudents.reduce((accum, current) => {
-      const idx = attendances.findIndex(
-        a => a.student.user_id === current.user_id,
-      );
+      const idx = attendances.findIndex(a => a.student.user_id === current.user_id);
       const finalData = {
         email: current.email,
         matric: current.user_id,
@@ -39,13 +37,10 @@ export const selectStudentList = createSelector(
         finalData.status = 'absent';
         finalData.time = '-';
       })(() => {
-        const isLate =
-          moment(attendances[idx].created_at).diff(
-            moment(data.time),
-            'minutes',
-          ) > LATE_LIMIT;
+        const isLate = moment(attendances[idx].created_at).diff(moment(data.time), 'minutes') > LATE_LIMIT;
         finalData.status = isLate ? 'late' : 'present';
         finalData.time = moment(attendances[idx].created_at).format('HH:mm');
+        finalData.attendanceId = attendances[idx].id;
       });
 
       return [...accum, finalData];

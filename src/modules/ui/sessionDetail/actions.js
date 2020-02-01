@@ -2,6 +2,11 @@ import serviceRegistry from 'lib/services/builder';
 import { tryCatch } from 'lib/utils';
 import { actionTypes } from './constant';
 
+export const deleteAttendanceFromSession = id => ({
+  type: actionTypes.DELETE_ATTENDANCE,
+  payload: id,
+});
+
 export const fetch = id => async dispatch => {
   dispatch({
     type: actionTypes.FETCH_SESSION_DETAIL_BEGIN,

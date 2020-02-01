@@ -22,3 +22,20 @@
     @apply bg-gray-800;
   }
 }
+
+.label {
+  @apply text-gray-700 font-bold text-sm;
+  &-block {
+    @apply block;
+  }
+}
+
+.input {
+  @apply appearance-none shadow rounded py-2 px-4;
+  &-block {
+    @apply w-full;
+  }
+  &:focus {
+    @apply outline-none shadow-outline;
+  }
+}

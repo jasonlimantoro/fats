@@ -24,6 +24,10 @@ export default function reducer(state = initialState, action) {
         .set('fetchError', fromJS(action.payload))
         .set('fetchResponse', initialState.get('fetchResponse'))
         .set('fetchLoaded', true);
+    case actionTypes.DELETE_ATTENDANCE:
+      return state.updateIn(['fetchResponse', 'attendances'], attendance => {
+        return attendance.filter(a => a.get('id') !== action.payload);
+      });
     default:
       return state;
   }

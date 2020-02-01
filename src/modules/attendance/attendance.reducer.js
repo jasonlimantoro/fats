@@ -7,6 +7,10 @@ const initialState = fromJS({
   listResponse: [],
   listError: {},
   listLoaded: {},
+  deleteLoading: false,
+  deleteResponse: {},
+  deleteError: {},
+  deleteLoaded: {},
 });
 
 export default function(state = initialState, action) {

@@ -5,9 +5,10 @@ import cls from 'classnames';
 import { Link } from 'react-router-dom';
 import { list } from '@/schedule/schedule.actions';
 import { selectSchedule } from '@/schedule/schedule.selector';
+import { routes } from 'config/routes';
+import { reverse } from 'named-urls';
 
-const Sessions = ({ schedules, list, match }) => {
-  const { url } = match;
+const Sessions = ({ schedules, list }) => {
   React.useEffect(
     () => {
       list();
@@ -16,9 +17,7 @@ const Sessions = ({ schedules, list, match }) => {
   );
   return (
     <div>
-      <h1 className="text-gray-800 text-3xl font-bold m-0">
-        Recent Lab Sessions
-      </h1>
+      <h1 className="text-gray-800 text-3xl font-bold m-0">Recent Lab Sessions</h1>
       <table className="table-auto w-full mt-4 text-center">
         <thead className="text-gray-600">
           <tr>
@@ -44,7 +43,10 @@ const Sessions = ({ schedules, list, match }) => {
               <td className="border border-gray-400 py-2 px-4">{name}</td>
               <td className="border border-gray-400 py-2 px-4">{time}</td>
               <td className="border border-gray-400 py-2 px-4 text-center">
-                <Link className="inline-block" to={`${url}/${id}`}>
+                <Link
+                  className="inline-block"
+                  to={reverse(String(routes.panel.admin.sessions.detail), { sessionId: id })}
+                >
                   <svg
                     className="h-6 w-6 fill-current"
                     xmlns="http://www.w3.org/2000/svg"
@@ -65,7 +67,6 @@ const Sessions = ({ schedules, list, match }) => {
 Sessions.propTypes = {
   schedules: PropTypes.array,
   list: PropTypes.func.isRequired,
-  match: PropTypes.object,
 };
 
 Sessions.defaultProps = {};
