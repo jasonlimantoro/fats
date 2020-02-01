@@ -1,23 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Dashboard from 'layouts/Dashboard/Dashboard';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route, Redirect, NavLink } from 'react-router-dom';
+import { Breadcrumbs } from 'react-breadcrumbs-dynamic';
 import { routes } from 'config/routes';
 import { menus } from './constant';
 import Sessions from './Sessions';
-import SessionDetail from './SessionDetail';
-import AddAttendance from './AddAttendance';
 
 const AdminPanel = () => {
   return (
     <Dashboard menus={menus}>
+      <Breadcrumbs separator={<b> / </b>} item={NavLink} finalItem="b" />
+      <Dashboard.Title />
       <Switch>
-        <Route path={String(routes.panel.admin.sessions)} component={Sessions} exact />
-        <Route exact path={String(routes.panel.admin.sessions.detail)} component={SessionDetail} />
-        <Route
-          path={String(routes.panel.admin.sessions.detail.attendance.add.student)}
-          component={AddAttendance}
-        />
+        <Route path={String(routes.panel.admin.sessions)} component={Sessions} />
         <Redirect to={String(routes.panel.admin.sessions)} />
       </Switch>
     </Dashboard>

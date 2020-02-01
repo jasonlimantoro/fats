@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ThroughProvider } from 'react-through';
 import { Provider } from 'react-redux';
 import rootReducer from 'modules';
 import createStore from 'store/createStore';
@@ -12,9 +13,11 @@ const Root = ({ config }) => {
   return (
     <Provider store={config.reduxStore}>
       <PersistGate loading={null} persistor={config.persistor}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <ThroughProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ThroughProvider>
       </PersistGate>
     </Provider>
   );

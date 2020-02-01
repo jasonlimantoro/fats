@@ -4,11 +4,16 @@ import { connect } from 'react-redux';
 import { useFormik } from 'formik';
 import { feedData, submit } from '@/ui/addAttendance/actions';
 import { selectInitialFormData } from '@/ui/addAttendance/selector';
+import { createAgent } from 'react-through';
+import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
+
+const TitleAgent = createAgent('title');
 
 const AddAttendance = ({ match, feedData, initialFormData, submit }) => {
   const {
     params: { sessionId, studentId },
   } = match;
+  const { url } = match;
   React.useEffect(
     () => {
       feedData(sessionId);
@@ -27,7 +32,10 @@ const AddAttendance = ({ match, feedData, initialFormData, submit }) => {
   });
   return (
     <div>
-      Add Attendance
+      <TitleAgent>Add Attendance</TitleAgent>
+      <BreadcrumbsItem className="breadcrumb" to={url}>
+        Add attendance
+      </BreadcrumbsItem>
       <form onSubmit={form.handleSubmit}>
         <div className="mb-4">
           <label className="label label-block" htmlFor="lab">

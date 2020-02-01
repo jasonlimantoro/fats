@@ -39,3 +39,7 @@
     @apply outline-none shadow-outline;
   }
 }
+
+.breadcrumb {
+  @apply inline-flex text-gray-800 rounded py-1 px-2;
+}
