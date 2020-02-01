@@ -1,7 +1,6 @@
 import serviceRegistry from 'lib/services/builder';
 import { tryCatch } from 'lib/utils';
 import { actionTypes } from './attendance.constant';
-import { deleteAttendanceFromSession } from '@/ui/sessionDetail/actions';
 
 const service = serviceRegistry.services.attendance;
 
@@ -40,7 +39,6 @@ export const destroy = id => async dispatch => {
         scope: 'delete',
         payload: response.data,
       });
-      dispatch(deleteAttendanceFromSession(id));
     },
     errorFn(err) {
       dispatch({

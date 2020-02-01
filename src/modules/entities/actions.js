@@ -47,7 +47,7 @@ export const detail = (id, { resource, shouldNormalize = true, schema } = {}) =>
 
 export const create = (body, { resource, shouldNormalize = true, schema } = {}) => async dispatch => {
   dispatch({
-    type: actionTypes.FETCH_BEGIN,
+    type: actionTypes.ADD_BEGIN,
     payload: body,
     scope: 'create',
     resource,
@@ -63,6 +63,24 @@ export const create = (body, { resource, shouldNormalize = true, schema } = {}) 
     },
     errorFn(err) {
       dispatch({ type: actionTypes.ADD_FAILURE, payload: err, scope: 'create', resource });
+    },
+  });
+};
+
+export const destroy = (id, { resource } = {}) => async dispatch => {
+  dispatch({
+    type: actionTypes.REMOVE_BEGIN,
+    payload: id,
+    scope: 'delete',
+    resource,
+  });
+  const service = serviceRegistry.services[resource];
+  await tryCatch(() => service.destroy(id), {
+    successFn() {
+      dispatch({ type: actionTypes.REMOVE_SUCCESS, payload: id, scope: 'delete', resource });
+    },
+    errorFn(err) {
+      dispatch({ type: actionTypes.REMOVE_FAILURE, payload: err, scope: 'delete', resource });
     },
   });
 };

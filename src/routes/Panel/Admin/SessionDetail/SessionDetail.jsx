@@ -3,26 +3,25 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Dashboard from 'layouts/Dashboard';
-import { fetch } from '@/ui/sessionDetail/actions';
-import { destroy } from '@/attendance/attendance.actions';
+import { feedData, deleteAttendance } from '@/ui/sessionDetail/actions';
 import { selectSessionDetailUI, selectStudentList } from '@/ui/sessionDetail/selector';
 import { routes } from 'config/routes';
 import { reverse } from 'named-urls';
 
-const SessionDetail = ({ match, fetch, destroy, scheduleDetail, studentList }) => {
+const SessionDetail = ({ match, feedData, deleteAttendance, scheduleDetail, studentList }) => {
   const {
     params: { sessionId },
   } = match;
   React.useEffect(
     () => {
-      fetch(sessionId);
+      feedData(sessionId);
     },
-    [fetch, sessionId],
+    [feedData, sessionId],
   );
   const handleDelete = id => {
-    // eslint-disable-next-line no-restricted-globals
+    // eslint-disable-next-line no-restricted-globals,no-alert
     if (confirm('Are you sure you want to delete this attendance?')) {
-      destroy(id);
+      deleteAttendance(id);
     }
   };
   return (
@@ -71,7 +70,7 @@ const SessionDetail = ({ match, fetch, destroy, scheduleDetail, studentList }) =
                   <td className="border border-gray-400 p-2">{s.status}</td>
                   <td className="border border-gray-400 p-2">{s.time}</td>
                   <td className="border border-gray-400 p-2">
-                    {s.attendanceId ? (
+                    {s.status !== 'absent' ? (
                       <button onClick={() => handleDelete(s.attendanceId)} className="text-gray-700">
                         <svg
                           className="h-3 w-3 fill-current"
@@ -105,8 +104,8 @@ const SessionDetail = ({ match, fetch, destroy, scheduleDetail, studentList }) =
 
 SessionDetail.propTypes = {
   match: PropTypes.object,
-  fetch: PropTypes.func.isRequired,
-  destroy: PropTypes.func.isRequired,
+  feedData: PropTypes.func.isRequired,
+  deleteAttendance: PropTypes.func.isRequired,
   scheduleDetail: PropTypes.object.isRequired,
   studentList: PropTypes.array.isRequired,
 };
@@ -117,7 +116,7 @@ const mapStateToProps = state => ({
   scheduleDetail: selectSessionDetailUI(state),
   studentList: selectStudentList(state),
 });
-const mapDispatchToProps = { fetch, destroy };
+const mapDispatchToProps = { feedData, deleteAttendance };
 
 export default connect(
   mapStateToProps,

@@ -59,14 +59,19 @@ export default function(state = initialState, action) {
       return state
         .mergeIn(['data'], fromJS(action.payload.entities))
         .set('result', fromJS(action.payload.result));
+
     case actionTypes.ADD_SUCCESS:
       return state.mergeIn(
         ['data', `${action.resource}s`],
         fromJS(action.payload.entities[`${action.resource}s`]),
       );
+    case actionTypes.REMOVE_SUCCESS:
+      return state.setIn(['data', `${action.resource}s`, action.payload], undefined);
+
     case actionTypes.FETCH_FAILURE:
     case actionTypes.DETAIL_FAILURE:
     case actionTypes.ADD_FAILURE:
+    case actionTypes.REMOVE_FAILURE:
       return state.setIn(['status', action.resource, scope.error], fromJS(action.payload));
     default:
       return state;

@@ -1,49 +1,53 @@
 import { createSelector } from 'reselect';
-import { executeIf } from 'lib/utils';
+import { selectDataJS } from '@/entities/selectors';
 import moment from 'moment';
 
-const selectSessionDetail = createSelector(
-  state => state.ui.sessionDetail.get('fetchResponse'),
-  state => state.toJS(),
-);
-
 export const selectSessionDetailUI = createSelector(
-  selectSessionDetail,
-  data => {
+  selectDataJS,
+  state => {
+    if (!state.result) return {};
+    const schedule = state.data.schedules[state.result];
+    const lab = state.data.labs[schedule.lab];
     return {
-      course: data.lab?.course,
-      index: data.lab?.index,
-      group: data.lab?.name,
-      time: moment(data.time).format('YYYY-MM-DD HH:mm'),
+      course: lab?.course,
+      index: lab?.index,
+      group: lab?.name,
+      time: moment(schedule.time).format('YYYY-MM-DD HH:mm'),
     };
   },
 );
 
 export const selectStudentList = createSelector(
-  selectSessionDetail,
-  data => {
-    if (!data || !data.attendances) return [];
-    const allStudents = data.lab.students;
-    const { attendances } = data;
+  selectDataJS,
+  state => {
+    if (!state.result) return [];
+    const schedule = state.data.schedules[state.result];
+    const allStudents = state.data.students;
+    const { attendances } = state.data;
     const LATE_LIMIT = 15;
-
-    return allStudents.reduce((accum, current) => {
-      const idx = attendances.findIndex(a => a.student.user_id === current.user_id);
-      const finalData = {
-        email: current.email,
-        matric: current.user_id,
-      };
-      executeIf(idx !== -1, () => {
-        finalData.status = 'absent';
-        finalData.time = '-';
-      })(() => {
-        const isLate = moment(attendances[idx].created_at).diff(moment(data.time), 'minutes') > LATE_LIMIT;
-        finalData.status = isLate ? 'late' : 'present';
-        finalData.time = moment(attendances[idx].created_at).format('HH:mm');
-        finalData.attendanceId = attendances[idx].id;
-      });
-
-      return [...accum, finalData];
+    return Object.values(allStudents).reduce((accum, current) => {
+      if (current.attendanceId && attendances[current.attendanceId]) {
+        const attendance = attendances[current.attendanceId];
+        const isLate = moment(attendance.created_at).diff(moment(schedule.time), 'minutes') > LATE_LIMIT;
+        return [
+          ...accum,
+          {
+            ...current,
+            matric: current.user_id,
+            status: isLate ? 'late' : 'present',
+            time: moment(attendance.created_at).format('HH:mm'),
+          },
+        ];
+      }
+      return [
+        ...accum,
+        {
+          ...current,
+          matric: current.user_id,
+          status: 'absent',
+          time: '-',
+        },
+      ];
     }, []);
   },
 );
