@@ -2,6 +2,8 @@ import AuthService from '@/auth/auth.service';
 import AttendanceService from '@/attendance/attendance.service';
 import ScheduleService from '@/schedule/schedule.service';
 import LabService from '@/lab/lab.service';
+import CourseService from '@/course/course.service';
+import StudentService from '@/student/student.service';
 
 export const builder = config => {
   const services = {
@@ -9,6 +11,8 @@ export const builder = config => {
     attendance: new AttendanceService(config),
     schedule: new ScheduleService(config),
     lab: new LabService(config),
+    course: new CourseService(config),
+    student: new StudentService(config),
   };
   return {
     services,

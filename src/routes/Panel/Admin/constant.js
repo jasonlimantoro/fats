@@ -4,7 +4,7 @@ export const menus = [
     label: 'Lab',
     children: [
       { id: 'sessions', label: 'Sessions', path: 'sessions' },
-      { id: 'register', label: 'Register Student' },
+      { id: 'register', label: 'Register Student', path: 'register' },
     ],
   },
 ];

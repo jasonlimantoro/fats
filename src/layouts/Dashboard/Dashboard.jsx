@@ -4,7 +4,7 @@ import cls from 'classnames';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { throughDirect } from 'react-through';
+import { throughDirect, createAgent } from 'react-through';
 import { selectUser } from '@/auth/auth.selector';
 import { logout } from '@/auth/auth.actions';
 import Sidebar from './Sidebar';
@@ -33,7 +33,9 @@ const Title = ({ children, className }) => (
   <p className={cls('text-gray-800 text-3xl font-bold', className)}>{children}</p>
 );
 
+const Agent = createAgent('title');
 Dashboard.Title = throughDirect('title')(Title);
+Dashboard.TitleAgent = Agent;
 
 Dashboard.propTypes = {
   user: PropTypes.object.isRequired,

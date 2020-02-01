@@ -6,6 +6,7 @@ import { Breadcrumbs } from 'react-breadcrumbs-dynamic';
 import { routes } from 'config/routes';
 import { menus } from './constant';
 import SessionsRoutes from './Sessions';
+import RegisterStudent from './RegisterStudent';
 
 const AdminPanel = () => {
   return (
@@ -13,6 +14,7 @@ const AdminPanel = () => {
       <Breadcrumbs separator={<b> / </b>} item={NavLink} finalItem="b" />
       <Dashboard.Title />
       <Switch>
+        <Route path={routes.panel.admin.register} component={RegisterStudent} />
         <Route path={String(routes.panel.admin.sessions)} component={SessionsRoutes} />
         <Redirect to={String(routes.panel.admin.sessions)} />
       </Switch>

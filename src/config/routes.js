@@ -19,6 +19,7 @@ export const routes = {
           }),
         }),
       }),
+      register: 'register',
       overview: 'overview',
     }),
   }),

@@ -7,7 +7,7 @@ export const fetch = ({ resource, shouldNormalize = true, schema } = {}) => asyn
   dispatch({
     type: actionTypes.FETCH_BEGIN,
     resource,
-    scope: 'detail',
+    scope: 'list',
   });
   const service = serviceRegistry.services[resource];
   await tryCatch(() => service.list(), {
@@ -16,10 +16,10 @@ export const fetch = ({ resource, shouldNormalize = true, schema } = {}) => asyn
       if (shouldNormalize) {
         processedData = normalize(processedData, schema);
       }
-      dispatch({ type: actionTypes.FETCH_SUCCESS, payload: processedData });
+      dispatch({ type: actionTypes.FETCH_SUCCESS, payload: processedData, scope: 'list' });
     },
     errorFn(err) {
-      dispatch({ type: actionTypes.FETCH_FAILURE, payload: err });
+      dispatch({ type: actionTypes.FETCH_FAILURE, payload: err, scope: 'list' });
     },
   });
 };
@@ -81,6 +81,33 @@ export const destroy = (id, { resource } = {}) => async dispatch => {
     },
     errorFn(err) {
       dispatch({ type: actionTypes.REMOVE_FAILURE, payload: err, scope: 'delete', resource });
+    },
+  });
+};
+
+export const update = (id, body, { resource, shouldNormalize = true, schema } = {}) => async dispatch => {
+  dispatch({
+    type: actionTypes.UPDATE_BEGIN,
+    payload: { id, body },
+    scope: 'update',
+    resource,
+  });
+  const service = serviceRegistry.services[resource];
+  await tryCatch(() => service.update(id, body), {
+    successFn(resp) {
+      let processedData = resp.data;
+      if (shouldNormalize) {
+        processedData = normalize(processedData, schema);
+      }
+      dispatch({
+        type: actionTypes.UPDATE_SUCCESS,
+        payload: { id, data: processedData },
+        scope: 'update',
+        resource,
+      });
+    },
+    errorFn(err) {
+      dispatch({ type: actionTypes.UPDATE_FAILURE, payload: err, scope: 'update', resource });
     },
   });
 };

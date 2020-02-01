@@ -8,6 +8,7 @@ const initialState = fromJS({
     schedules: {},
     labs: {},
     students: {},
+    courses: {},
   },
   result: '',
   status: {
@@ -43,6 +44,14 @@ const initialState = fromJS({
       createLoading: false,
       createError: false,
     },
+    course: {
+      fetchLoading: false,
+      fetchError: false,
+      detailLoading: false,
+      detailError: false,
+      createLoading: false,
+      createError: false,
+    },
   },
 });
 
@@ -63,14 +72,20 @@ export default function(state = initialState, action) {
     case actionTypes.DETAIL_BEGIN:
     case actionTypes.ADD_BEGIN:
     case actionTypes.REMOVE_BEGIN:
+    case actionTypes.UPDATE_BEGIN:
       return state.setIn(['status', action.resource, scope.loading], true);
 
     case actionTypes.FETCH_SUCCESS:
     case actionTypes.DETAIL_SUCCESS:
       return state
-        .mergeIn(['data'], fromJS(action.payload.entities))
+        .mergeDeepIn(['data'], fromJS(action.payload.entities))
         .set('result', fromJS(action.payload.result));
 
+    case actionTypes.UPDATE_SUCCESS:
+      return state.mergeIn(
+        ['data', `${action.resource}s`],
+        fromJS(action.payload.data.entities[`${action.resource}s`]),
+      );
     case actionTypes.ADD_SUCCESS:
       return state
         .set('data', attendanceReducer(state.get('data'), action))
@@ -78,6 +93,7 @@ export default function(state = initialState, action) {
     case actionTypes.REMOVE_SUCCESS:
       return state.setIn(['data', `${action.resource}s`, action.payload], undefined);
 
+    case actionTypes.UPDATE_FAILURE:
     case actionTypes.FETCH_FAILURE:
     case actionTypes.DETAIL_FAILURE:
     case actionTypes.ADD_FAILURE:
