@@ -23,9 +23,9 @@ const AddAttendance = ({ match, feedData, initialFormData, submit }) => {
 
   const form = useFormik({
     initialValues: {
-      lab: initialFormData.lab,
-      student: studentId,
-      schedule: initialFormData.schedule,
+      lab: initialFormData.lab || '',
+      student: studentId || '',
+      schedule: initialFormData.schedule || '',
     },
     enableReinitialize: true,
     onSubmit: values => submit(values),

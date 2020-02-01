@@ -46,12 +46,23 @@ const initialState = fromJS({
   },
 });
 
+const attendanceReducer = (state = {}, action) => {
+  if (action.type === actionTypes.ADD_SUCCESS && action.resource === 'attendance') {
+    return state.setIn(
+      ['students', action.payload.entities.attendances[action.payload.result].student, 'attendanceId'],
+      action.payload.result,
+    );
+  }
+  return state;
+};
+
 export default function(state = initialState, action) {
   const scope = new ScopedKey(action.scope);
   switch (action.type) {
     case actionTypes.FETCH_BEGIN:
     case actionTypes.DETAIL_BEGIN:
     case actionTypes.ADD_BEGIN:
+    case actionTypes.REMOVE_BEGIN:
       return state.setIn(['status', action.resource, scope.loading], true);
 
     case actionTypes.FETCH_SUCCESS:
@@ -61,10 +72,9 @@ export default function(state = initialState, action) {
         .set('result', fromJS(action.payload.result));
 
     case actionTypes.ADD_SUCCESS:
-      return state.mergeIn(
-        ['data', `${action.resource}s`],
-        fromJS(action.payload.entities[`${action.resource}s`]),
-      );
+      return state
+        .set('data', attendanceReducer(state.get('data'), action))
+        .mergeIn(['data', `${action.resource}s`], fromJS(action.payload.entities[`${action.resource}s`]));
     case actionTypes.REMOVE_SUCCESS:
       return state.setIn(['data', `${action.resource}s`, action.payload], undefined);
 
