@@ -13,19 +13,10 @@
   },
   "root": true,
   "rules": {
-    "indent": [
-      "error",
-      2,
-      {
-        "SwitchCase": 1
-      }
-    ],
+    "indent": 0,
     "no-console": 2,
     "no-shadow": 0,
-    "no-unused-vars": [
-      "error",
-      { "argsIgnorePattern": "^_", "varsIgnorePattern": "PropTypes" }
-    ],
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "PropTypes" }],
     "react/prefer-stateless-function": "warn",
     "react/self-closing-comp": [
       "warn",
@@ -37,12 +28,7 @@
     "react/sort-comp": [
       1,
       {
-        "order": [
-          "static-methods",
-          "lifecycle",
-          "everything-else",
-          "rendering"
-        ],
+        "order": ["static-methods", "lifecycle", "everything-else", "rendering"],
         "groups": {
           "rendering": ["/^render.+$/", "render"]
         }
