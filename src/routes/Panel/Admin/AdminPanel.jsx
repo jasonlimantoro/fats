@@ -5,7 +5,7 @@ import { Switch, Route, Redirect, NavLink } from 'react-router-dom';
 import { Breadcrumbs } from 'react-breadcrumbs-dynamic';
 import { routes } from 'config/routes';
 import { menus } from './constant';
-import Sessions from './Sessions';
+import SessionsRoutes from './Sessions';
 
 const AdminPanel = () => {
   return (
@@ -13,7 +13,7 @@ const AdminPanel = () => {
       <Breadcrumbs separator={<b> / </b>} item={NavLink} finalItem="b" />
       <Dashboard.Title />
       <Switch>
-        <Route path={String(routes.panel.admin.sessions)} component={Sessions} />
+        <Route path={String(routes.panel.admin.sessions)} component={SessionsRoutes} />
         <Redirect to={String(routes.panel.admin.sessions)} />
       </Switch>
     </Dashboard>

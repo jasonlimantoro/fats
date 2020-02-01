@@ -9,7 +9,7 @@ import { list } from '@/schedule/schedule.actions';
 import { selectSchedule } from '@/schedule/schedule.selector';
 import { routes } from 'config/routes';
 import { reverse } from 'named-urls';
-import SessionDetail from 'routes/Panel/Admin/SessionDetail/SessionDetail';
+import SessionDetailRoutes from 'routes/Panel/Admin/SessionDetail/routes';
 
 const TitleAgent = createAgent('title');
 
@@ -78,7 +78,7 @@ const Sessions = ({ schedules, list, match }) => {
             </>
           )}
         />
-        <Route path={String(routes.panel.admin.sessions.detail)} component={SessionDetail} />
+        <Route path={String(routes.panel.admin.sessions.detail)} component={SessionDetailRoutes} />
       </Switch>
     </div>
   );
