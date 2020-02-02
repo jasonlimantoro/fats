@@ -2,30 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useFormik } from 'formik';
-import { feedData, submit } from '@/ui/addAttendance/actions';
+import { submit } from '@/ui/addAttendance/actions';
 import { selectInitialFormData } from '@/ui/addAttendance/selector';
 import { createAgent } from 'react-through';
 import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 
 const TitleAgent = createAgent('title');
 
-const AddAttendance = ({ match, feedData, initialFormData, submit }) => {
+const AddAttendance = ({ match, sessionId, session, initialFormData, submit }) => {
   const {
-    params: { sessionId, studentId },
+    params: { studentId },
   } = match;
   const { url } = match;
-  React.useEffect(
-    () => {
-      feedData(sessionId);
-    },
-    [feedData, sessionId],
-  );
-
   const form = useFormik({
     initialValues: {
       lab: initialFormData.lab || '',
       student: studentId || '',
-      schedule: sessionId,
+      schedule: sessionId || '',
+      created_at: session.time || '',
     },
     enableReinitialize: true,
     onSubmit: values => submit(values),
@@ -42,6 +36,7 @@ const AddAttendance = ({ match, feedData, initialFormData, submit }) => {
             Lab
           </label>
           <input
+            id="lab"
             name="lab"
             type="text"
             className="input"
@@ -55,6 +50,7 @@ const AddAttendance = ({ match, feedData, initialFormData, submit }) => {
             Schedule
           </label>
           <input
+            id="schedule"
             name="schedule"
             className="input"
             type="text"
@@ -65,10 +61,11 @@ const AddAttendance = ({ match, feedData, initialFormData, submit }) => {
         </div>
 
         <div className="mb-4">
-          <label className="label label-block" htmlFor="lab">
+          <label className="label label-block" htmlFor="student">
             Student
           </label>
           <input
+            id="student"
             name="student"
             className="input"
             type="text"
@@ -77,6 +74,22 @@ const AddAttendance = ({ match, feedData, initialFormData, submit }) => {
             value={form.values.student}
           />
         </div>
+        <div className="mb-4">
+          <label className="label label-block" htmlFor="created_at">
+            Time
+          </label>
+          <input
+            id="created_at"
+            disabled
+            name="created_at"
+            className="input"
+            type="text"
+            onChange={form.handleChange}
+            onBlur={form.handleBlur}
+            value={form.values.created_at}
+          />
+        </div>
+
         <button type="submit" className="btn btn-gray">
           Submit
         </button>
@@ -87,24 +100,18 @@ const AddAttendance = ({ match, feedData, initialFormData, submit }) => {
 
 AddAttendance.propTypes = {
   match: PropTypes.object.isRequired,
-  feedData: PropTypes.func.isRequired,
+  session: PropTypes.object.isRequired,
+  sessionId: PropTypes.string.isRequired,
   submit: PropTypes.func.isRequired,
   initialFormData: PropTypes.object.isRequired,
 };
 
 AddAttendance.defaultProps = {};
 
-const mapStateToProps = (
-  state,
-  {
-    match: {
-      params: { sessionId },
-    },
-  },
-) => ({
+const mapStateToProps = (state, { sessionId }) => ({
   initialFormData: selectInitialFormData(state, sessionId),
 });
-const mapDispatchToProps = { feedData, submit };
+const mapDispatchToProps = { submit };
 
 export default connect(
   mapStateToProps,

@@ -3,22 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { createAgent } from 'react-through';
-import { feedData, deleteAttendance } from '@/ui/sessionDetail/actions';
-import { selectSessionDetailUI, selectStudentList } from '@/ui/sessionDetail/selector';
+import { deleteAttendance } from '@/ui/sessionDetail/actions';
 import { routes } from 'config/routes';
 import { reverse } from 'named-urls';
 
 const TitleAgent = createAgent('title');
-const SessionDetail = ({ match, feedData, deleteAttendance, scheduleDetail, studentList }) => {
-  const {
-    params: { sessionId },
-  } = match;
-  React.useEffect(
-    () => {
-      feedData(sessionId);
-    },
-    [feedData, sessionId],
-  );
+const SessionDetail = ({ id, deleteAttendance, studentList }) => {
   const handleDelete = id => {
     // eslint-disable-next-line no-restricted-globals,no-alert
     if (confirm('Are you sure you want to delete this attendance?')) {
@@ -28,24 +18,6 @@ const SessionDetail = ({ match, feedData, deleteAttendance, scheduleDetail, stud
   return (
     <div>
       <TitleAgent>Session Detail</TitleAgent>
-      <table className="border-collapse table-auto">
-        <thead>
-          <tr>
-            <th>Course</th>
-            <th>Index</th>
-            <th>Group</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody className="bg-gray-300">
-          <tr>
-            <td className="border border-gray-400 p-2">{scheduleDetail.course}</td>
-            <td className="border border-gray-400 p-2">{scheduleDetail.index}</td>
-            <td className="border border-gray-400 p-2">{scheduleDetail.group}</td>
-            <td className="border border-gray-400 p-2">{scheduleDetail.time}</td>
-          </tr>
-        </tbody>
-      </table>
       <div className="mt-6">
         <h2 className="text-semibold text-2xl">List of Students</h2>
         <table className="table-auto">
@@ -61,7 +33,7 @@ const SessionDetail = ({ match, feedData, deleteAttendance, scheduleDetail, stud
           <tbody>
             {studentList.map(s => {
               const attendanceIdUrl = reverse(routes.panel.admin.sessions.detail.attendance.add.student, {
-                sessionId,
+                sessionId: id,
                 studentId: s.matric,
               });
               return (
@@ -104,22 +76,16 @@ const SessionDetail = ({ match, feedData, deleteAttendance, scheduleDetail, stud
 };
 
 SessionDetail.propTypes = {
-  match: PropTypes.object,
-  feedData: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
   deleteAttendance: PropTypes.func.isRequired,
-  scheduleDetail: PropTypes.object.isRequired,
   studentList: PropTypes.array.isRequired,
 };
 
 SessionDetail.defaultProps = {};
 
-const mapStateToProps = (state, props) => ({
-  scheduleDetail: selectSessionDetailUI(state, props.match.params.sessionId),
-  studentList: selectStudentList(state, props.match.params.sessionId),
-});
-const mapDispatchToProps = { feedData, deleteAttendance };
+const mapDispatchToProps = { deleteAttendance };
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps,
 )(SessionDetail);
