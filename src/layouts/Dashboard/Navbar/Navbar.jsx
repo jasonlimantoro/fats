@@ -9,20 +9,13 @@ const Navbar = ({ onLogout, user, quickLinks, match }) => {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   return (
     <header className="bg-gray-800 text-white sm:flex sm:justify-between items-center py-3 px-4">
-      <div
-        className="bg-gray-800 flex justify-between items-center"
-        style={{ height: 45 }}
-      >
+      <div className="bg-gray-800 flex justify-between items-center" style={{ height: 45 }}>
         <div className="sm:hidden">
           <button
             onClick={() => setNavbarOpen(prev => !prev)}
             className="text-gray-300 focus:text-white hover:text-white focus:outline-none"
           >
-            <svg
-              className="h-6 w-6 fill-current"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-            >
+            <svg className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
               {navbarOpen ? (
                 <path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z" />
               ) : (
@@ -58,24 +51,18 @@ const Navbar = ({ onLogout, user, quickLinks, match }) => {
           </button>
           <button
             data-label="overlay"
-            className={cls(
-              'fixed inset-0 w-full h-full bg-black opacity-50 cursor-default',
-              { hidden: !dropdownOpen },
-            )}
+            className={cls('fixed inset-0 w-full h-full bg-black opacity-50 cursor-default', {
+              hidden: !dropdownOpen,
+            })}
             onClick={() => setDropdownOpen(prev => !prev)}
           />
           <div
-            className={cls(
-              'absolute right-0 bg-white rounded-lg py-2 text-black w-32 shadow-md',
-              {
-                hidden: !dropdownOpen,
-              },
-            )}
+            className={cls('absolute right-0 bg-white rounded-lg py-2 text-black w-32 shadow-md', {
+              hidden: !dropdownOpen,
+            })}
           >
-            <a
-              className="block px-4 py-2 text-gray-800 hover:text-white hover:bg-gray-500"
-              href="#"
-            >
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+            <a className="block px-4 py-2 text-gray-800 hover:text-white hover:bg-gray-500" href="#">
               Settings
             </a>
             <button
