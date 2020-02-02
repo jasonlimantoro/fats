@@ -23,7 +23,7 @@ const Routes = ({ match, scheduleDetail, studentList, feedData }) => {
   return (
     <div>
       <BreadcrumbsItem className="breadcrumb" to={url}>
-        Session {sessionId}
+        Session {scheduleDetail.course}-{scheduleDetail.index}
       </BreadcrumbsItem>
       <table className="border-collapse table-auto">
         <thead>

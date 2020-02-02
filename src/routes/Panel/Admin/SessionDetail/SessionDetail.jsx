@@ -2,12 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { createAgent } from 'react-through';
 import { deleteAttendance } from '@/ui/sessionDetail/actions';
 import { routes } from 'config/routes';
 import { reverse } from 'named-urls';
 
-const TitleAgent = createAgent('title');
 const SessionDetail = ({ id, deleteAttendance, studentList }) => {
   const handleDelete = id => {
     // eslint-disable-next-line no-restricted-globals,no-alert
@@ -17,7 +15,6 @@ const SessionDetail = ({ id, deleteAttendance, studentList }) => {
   };
   return (
     <div>
-      <TitleAgent>Session Detail</TitleAgent>
       <div className="mt-6">
         <h2 className="text-semibold text-2xl">List of Students</h2>
         <table className="table-auto">

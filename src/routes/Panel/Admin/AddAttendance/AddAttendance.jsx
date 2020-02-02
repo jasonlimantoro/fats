@@ -4,10 +4,7 @@ import { connect } from 'react-redux';
 import { useFormik } from 'formik';
 import { submit } from '@/ui/addAttendance/actions';
 import { selectInitialFormData } from '@/ui/addAttendance/selector';
-import { createAgent } from 'react-through';
 import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
-
-const TitleAgent = createAgent('title');
 
 const AddAttendance = ({ match, sessionId, session, initialFormData, submit }) => {
   const {
@@ -26,7 +23,6 @@ const AddAttendance = ({ match, sessionId, session, initialFormData, submit }) =
   });
   return (
     <div>
-      <TitleAgent>Add Attendance</TitleAgent>
       <BreadcrumbsItem className="breadcrumb" to={url}>
         Add attendance
       </BreadcrumbsItem>
