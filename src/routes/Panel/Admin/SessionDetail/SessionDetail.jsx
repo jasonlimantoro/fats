@@ -113,9 +113,9 @@ SessionDetail.propTypes = {
 
 SessionDetail.defaultProps = {};
 
-const mapStateToProps = state => ({
-  scheduleDetail: selectSessionDetailUI(state),
-  studentList: selectStudentList(state),
+const mapStateToProps = (state, props) => ({
+  scheduleDetail: selectSessionDetailUI(state, props.match.params.sessionId),
+  studentList: selectStudentList(state, props.match.params.sessionId),
 });
 const mapDispatchToProps = { feedData, deleteAttendance };
 

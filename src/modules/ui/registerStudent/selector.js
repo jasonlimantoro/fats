@@ -1,10 +1,11 @@
 import { selectDataJS } from '@/entities/selectors';
 import { createSelector } from 'reselect';
+import isEmpty from 'lodash/isEmpty';
 
 export const selectDataSets = createSelector(
   selectDataJS,
   state => {
-    if (!state.result) return { courses: [], labs: [], students: [] };
+    if (isEmpty(state.data.courses)) return { courses: [], labs: [], students: [] };
     const labs = Object.values(state.data.labs).map(({ index, name }) => {
       return {
         value: index,
@@ -17,7 +18,7 @@ export const selectDataSets = createSelector(
       label: `${username} (${user_id})`,
     }));
     return {
-      courses: state.result,
+      courses: Object.keys(state.data.courses),
       labs,
       students,
     };

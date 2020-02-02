@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import { isImmutable } from 'immutable';
 
-const selectData = state => state.entities.get('data');
-const selectResult = state => state.entities.get('result');
+const selectData = (state, _props) => state.entities.get('data');
+const selectResult = (state, _props) => state.entities.get('result');
 
 export const selectDataJS = createSelector(
   selectData,

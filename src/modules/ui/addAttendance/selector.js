@@ -1,20 +1,16 @@
 import { createSelector } from 'reselect';
 import { selectDataJS } from '@/entities/selectors';
+import isEmpty from 'lodash/isEmpty';
 
 export const selectInitialFormData = createSelector(
   selectDataJS,
-  state => {
-    if (!state.data || !state.result) return {};
-    const schedule = state.data.schedules[state.result];
+  (_, sessionId) => sessionId,
+  (state, sessionId) => {
+    if (isEmpty(state.data.schedules)) return {};
+    const schedule = state.data.schedules[sessionId];
     const lab = state.data.labs[schedule.lab];
-    const studentIds = lab.students;
-    const students = studentIds.map(id => {
-      return state.data.students[id];
-    });
     return {
       lab: lab.index,
-      students,
-      schedule: state.result,
     };
   },
 );

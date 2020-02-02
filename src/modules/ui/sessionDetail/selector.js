@@ -1,12 +1,15 @@
 import { createSelector } from 'reselect';
 import { selectDataJS } from '@/entities/selectors';
 import moment from 'moment';
+import isEmpty from 'lodash/isEmpty';
 
 export const selectSessionDetailUI = createSelector(
   selectDataJS,
-  state => {
-    if (!state.result) return {};
-    const schedule = state.data.schedules[state.result];
+  (_, props) => props,
+  (state, sessionId) => {
+    if (isEmpty(state.data.schedules)) return {};
+    const schedule = state.data.schedules[sessionId];
+    if (!schedule) return {};
     const lab = state.data.labs[schedule.lab];
     return {
       course: lab?.course,
@@ -19,9 +22,10 @@ export const selectSessionDetailUI = createSelector(
 
 export const selectStudentList = createSelector(
   selectDataJS,
-  state => {
-    if (!state.result) return [];
-    const schedule = state.data.schedules[state.result];
+  (_, props) => props,
+  (state, sessionId) => {
+    if (isEmpty(state.data.schedules)) return [];
+    const schedule = state.data.schedules[sessionId];
     const allStudents = state.data.students;
     const { attendances } = state.data;
     const LATE_LIMIT = 15;

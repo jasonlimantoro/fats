@@ -25,7 +25,7 @@ const AddAttendance = ({ match, feedData, initialFormData, submit }) => {
     initialValues: {
       lab: initialFormData.lab || '',
       student: studentId || '',
-      schedule: initialFormData.schedule || '',
+      schedule: sessionId,
     },
     enableReinitialize: true,
     onSubmit: values => submit(values),
@@ -94,8 +94,15 @@ AddAttendance.propTypes = {
 
 AddAttendance.defaultProps = {};
 
-const mapStateToProps = state => ({
-  initialFormData: selectInitialFormData(state),
+const mapStateToProps = (
+  state,
+  {
+    match: {
+      params: { sessionId },
+    },
+  },
+) => ({
+  initialFormData: selectInitialFormData(state, sessionId),
 });
 const mapDispatchToProps = { feedData, submit };
 
