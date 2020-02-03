@@ -1,5 +1,5 @@
 import { fromJS } from 'immutable';
-import { ScopedKey } from 'lib/utils';
+import { ScopedKey, mergeDeep } from 'lib/utils';
 import { actionTypes } from './constant';
 
 const initialState = fromJS({
@@ -9,6 +9,7 @@ const initialState = fromJS({
     labs: {},
     students: {},
     courses: {},
+    timetables: {},
   },
   result: '',
   status: {
@@ -77,9 +78,7 @@ export default function(state = initialState, action) {
 
     case actionTypes.FETCH_SUCCESS:
     case actionTypes.DETAIL_SUCCESS:
-      return state
-        .mergeDeepIn(['data'], fromJS(action.payload.entities))
-        .set('result', fromJS(action.payload.result));
+      return state.updateIn(['data'], data => mergeDeep(data, fromJS(action.payload.entities)));
 
     case actionTypes.UPDATE_SUCCESS:
       return state.mergeIn(

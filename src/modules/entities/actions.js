@@ -16,10 +16,10 @@ export const fetch = ({ resource, shouldNormalize = true, schema } = {}) => asyn
       if (shouldNormalize) {
         processedData = normalize(processedData, schema);
       }
-      dispatch({ type: actionTypes.FETCH_SUCCESS, payload: processedData, scope: 'list' });
+      dispatch({ type: actionTypes.FETCH_SUCCESS, resource, payload: processedData, scope: 'list' });
     },
     errorFn(err) {
-      dispatch({ type: actionTypes.FETCH_FAILURE, payload: err, scope: 'list' });
+      dispatch({ type: actionTypes.FETCH_FAILURE, resource, payload: err, scope: 'list' });
     },
   });
 };
@@ -37,10 +37,10 @@ export const detail = (id, { resource, shouldNormalize = true, schema } = {}) =>
       if (shouldNormalize) {
         processedData = normalize(processedData, schema);
       }
-      dispatch({ type: actionTypes.FETCH_SUCCESS, payload: processedData });
+      dispatch({ type: actionTypes.FETCH_SUCCESS, resource, scope: 'detail', payload: processedData });
     },
     errorFn(err) {
-      dispatch({ type: actionTypes.FETCH_FAILURE, payload: err });
+      dispatch({ type: actionTypes.FETCH_FAILURE, resource, scope: 'detail', payload: err });
     },
   });
 };

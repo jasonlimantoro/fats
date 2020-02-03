@@ -2,37 +2,35 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import cls from 'classnames';
-import { createAgent } from 'react-through';
+import moment from 'moment';
 import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { Link, Route, Switch } from 'react-router-dom';
-import { list } from '@/schedule/schedule.actions';
-import { selectSchedule } from '@/schedule/schedule.selector';
+import { feedData } from '@/ui/sessions/actions';
+import { selectTimetable, selectRecentSessions } from '@/ui/sessions/selector';
 import { routes } from 'config/routes';
 import { reverse } from 'named-urls';
 import SessionDetailRoutes from 'routes/Panel/Admin/SessionDetail/routes';
 
-const TitleAgent = createAgent('title');
-
-const Sessions = ({ schedules, list, match }) => {
+const Sessions = ({ schedules, match, feedData, timetables }) => {
   React.useEffect(
     () => {
-      list();
+      feedData();
     },
-    [list],
+    [feedData],
   );
   const { url } = match;
   return (
     <div>
       <BreadcrumbsItem className="breadcrumb" to={url}>
-        All
+        All Sessions
       </BreadcrumbsItem>
       <Switch>
         <Route
           exact
           path={url}
           render={() => (
-            <>
-              <TitleAgent>Recent Sessions</TitleAgent>
+            <div>
+              <p className="text-2xl font-bold">Recent Sessions</p>
               <table className="table-auto w-full mt-4 text-center">
                 <thead className="text-gray-600">
                   <tr>
@@ -56,7 +54,9 @@ const Sessions = ({ schedules, list, match }) => {
                       <td className="border border-gray-400 py-2 px-4">{course}</td>
                       <td className="border border-gray-400 py-2 px-4">{index}</td>
                       <td className="border border-gray-400 py-2 px-4">{name}</td>
-                      <td className="border border-gray-400 py-2 px-4">{time}</td>
+                      <td className="border border-gray-400 py-2 px-4">
+                        {moment(time).format('YYYY-MM-DD HH:mm')}
+                      </td>
                       <td className="border border-gray-400 py-2 px-4 text-center">
                         <Link
                           className="inline-block"
@@ -75,7 +75,77 @@ const Sessions = ({ schedules, list, match }) => {
                   ))}
                 </tbody>
               </table>
-            </>
+              <hr className="my-4" />
+              <p className="text-2xl font-bold">Schedule</p>
+              {timetables.length > 0 &&
+                timetables.map((t, idx) => (
+                  <div
+                    className={cls({
+                      'mt-4': idx !== 0,
+                    })}
+                    key={t.id}
+                  >
+                    <div className="my-2">
+                      <h1 className="text-xl underline">
+                        {t.id} - {t.name}
+                      </h1>
+                    </div>
+                    <table className="table-fixed">
+                      <thead>
+                        <tr>
+                          <th>Index</th>
+                          <th>Group</th>
+                          <th>Date</th>
+                          <th>Info</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {t.schedules.length > 0 ? (
+                          t.schedules.map(s => (
+                            <tr key={s.id}>
+                              <td className="column">{s.lab.index}</td>
+                              <td className="column">{s.lab.name}</td>
+                              <td className="column">
+                                <ul>
+                                  {s.schedule.map(({ label, past }) => (
+                                    <li
+                                      key={label}
+                                      className={cls({
+                                        'line-through italic text-gray-700': past,
+                                      })}
+                                    >
+                                      {label}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </td>
+                              <td className="column">
+                                <ul>
+                                  <li>
+                                    Weeks: {s.start_week} - {s.end_week}
+                                  </li>
+                                  <li>
+                                    Recurrence: <b>{s.week}</b> weeks
+                                  </li>
+                                  <li>
+                                    Time : {s.start_at} - {s.end_at}
+                                  </li>
+                                </ul>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td className="column" colSpan={3}>
+                              <p className="italic text-gray-600">No schedules are recorded</p>
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                ))}
+            </div>
           )}
         />
         <Route path={String(routes.panel.admin.sessions.detail)} component={SessionDetailRoutes} />
@@ -87,15 +157,17 @@ const Sessions = ({ schedules, list, match }) => {
 Sessions.propTypes = {
   schedules: PropTypes.array,
   match: PropTypes.object,
-  list: PropTypes.func.isRequired,
+  feedData: PropTypes.func.isRequired,
+  timetables: PropTypes.array.isRequired,
 };
 
 Sessions.defaultProps = {};
 
 const mapStateToProps = state => ({
-  schedules: selectSchedule(state),
+  schedules: selectRecentSessions(state),
+  timetables: selectTimetable(state),
 });
-const mapDispatchToProps = { list };
+const mapDispatchToProps = { feedData };
 
 export default connect(
   mapStateToProps,

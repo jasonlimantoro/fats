@@ -4,6 +4,7 @@ import ScheduleService from '@/schedule/schedule.service';
 import LabService from '@/lab/lab.service';
 import CourseService from '@/course/course.service';
 import StudentService from '@/student/student.service';
+import TimetableService from '@/timetable/timetable.service';
 
 export const builder = config => {
   const services = {
@@ -13,6 +14,7 @@ export const builder = config => {
     lab: new LabService(config),
     course: new CourseService(config),
     student: new StudentService(config),
+    timetable: new TimetableService(config),
   };
   return {
     services,
