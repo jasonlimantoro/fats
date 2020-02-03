@@ -1,33 +1,18 @@
 import moment from 'moment';
 
+const range = (start, stop, step = 1) =>
+  Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
+
 const generateWeek = (start, end, oddOrEven) => {
-  const finalArr = [];
-  let i = start;
-  while (i <= end + 1) {
-    if (i === 8) {
-      i++;
-      continue;
-    }
-    if (i === 7) {
-      finalArr.push(i);
-      if (oddOrEven === 'all') {
-        i += 2;
-      } else {
-        i += 3;
-      }
-      continue;
-    }
-    finalArr.push(i);
-    if (oddOrEven === 'all') {
-      i++;
-    } else {
-      i += 2;
-    }
-    if (i > end && oddOrEven === 'all') {
-      break;
-    }
+  let weeks = [];
+  if (oddOrEven === 'all') {
+    weeks = range(start, end);
+  } else {
+    weeks = range(start, end, 2);
   }
-  return finalArr;
+  const RECESS_WEEK = 8;
+  const addOffsetForRecessWeek = w => (w >= RECESS_WEEK ? w + 1 : w);
+  return weeks.map(addOffsetForRecessWeek);
 };
 
 export const generate = timetable => {
