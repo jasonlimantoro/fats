@@ -6,7 +6,7 @@ import { submit } from '@/ui/addAttendance/actions';
 import { selectInitialFormData } from '@/ui/addAttendance/selector';
 import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 
-const AddAttendance = ({ match, sessionId, session, initialFormData, submit }) => {
+const AddAttendance = ({ match, history, sessionId, session, initialFormData, submit }) => {
   const {
     params: { studentId },
   } = match;
@@ -19,7 +19,7 @@ const AddAttendance = ({ match, sessionId, session, initialFormData, submit }) =
       created_at: session.time || '',
     },
     enableReinitialize: true,
-    onSubmit: values => submit(values),
+    onSubmit: values => submit(values, { history, sessionId }),
   });
   return (
     <div>
@@ -96,6 +96,7 @@ const AddAttendance = ({ match, sessionId, session, initialFormData, submit }) =
 
 AddAttendance.propTypes = {
   match: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   session: PropTypes.object.isRequired,
   sessionId: PropTypes.string.isRequired,
   submit: PropTypes.func.isRequired,
