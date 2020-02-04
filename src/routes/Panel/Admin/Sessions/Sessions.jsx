@@ -5,13 +5,13 @@ import cls from 'classnames';
 import moment from 'moment';
 import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { Link, Route, Switch } from 'react-router-dom';
-import { feedData, addSession } from '@/ui/sessions/actions';
+import { feedData, addSession, deleteSession } from '@/ui/sessions/actions';
 import { selectTimetable, selectRecentSessions } from '@/ui/sessions/selector';
 import { routes } from 'config/routes';
 import { reverse } from 'named-urls';
 import SessionDetailRoutes from 'routes/Panel/Admin/SessionDetail/routes';
 
-const Sessions = ({ schedules, match, feedData, timetables, addSession }) => {
+const Sessions = ({ schedules, match, feedData, timetables, addSession, deleteSession }) => {
   React.useEffect(
     () => {
       feedData();
@@ -20,6 +20,11 @@ const Sessions = ({ schedules, match, feedData, timetables, addSession }) => {
   );
   const handleAddSession = body => {
     addSession(body);
+  };
+  const handleDelete = id => {
+    if (confirm('Are you sure you want to delete this session?')) {
+      deleteSession(id);
+    }
   };
   const { url } = match;
   return (
@@ -66,13 +71,22 @@ const Sessions = ({ schedules, match, feedData, timetables, addSession }) => {
                           to={reverse(String(routes.panel.admin.sessions.detail), { sessionId: id })}
                         >
                           <svg
-                            className="h-6 w-6 fill-current"
+                            className="h-4 w-4 fill-current"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                           >
                             <path d="M.2 10a11 11 0 0 1 19.6 0A11 11 0 0 1 .2 10zm9.8 4a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0-2a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
                           </svg>
                         </Link>
+                        <button onClick={() => handleDelete(id)} className="text-gray-700 ml-6">
+                          <svg
+                            className="h-4 w-4 fill-current"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M6 2l2-2h4l2 2h4v2H2V2h4zM3 6h14l-1 14H4L3 6zm5 2v10h1V8H8zm3 0v10h1V8h-1z" />
+                          </svg>
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -174,6 +188,7 @@ Sessions.propTypes = {
   match: PropTypes.object,
   feedData: PropTypes.func.isRequired,
   addSession: PropTypes.func.isRequired,
+  deleteSession: PropTypes.func.isRequired,
   timetables: PropTypes.array.isRequired,
 };
 
@@ -183,7 +198,7 @@ const mapStateToProps = state => ({
   schedules: selectRecentSessions(state),
   timetables: selectTimetable(state),
 });
-const mapDispatchToProps = { feedData, addSession };
+const mapDispatchToProps = { feedData, addSession, deleteSession };
 
 export default connect(
   mapStateToProps,

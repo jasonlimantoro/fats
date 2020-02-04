@@ -95,11 +95,13 @@ export default function(state = initialState, action) {
         ['data', `${action.resource}s`],
         fromJS(action.payload.data.entities[`${action.resource}s`]),
       );
-    case actionTypes.ADD_SUCCESS:
+    case actionTypes.ADD_SUCCESS: {
+      const state1 = attendanceReducer(state.get('data'), action);
+      const state2 = scheduleReducer(state1, action);
       return state
-        .set('data', attendanceReducer(state.get('data'), action))
-        .set('data', scheduleReducer(state.get('data'), action))
+        .setIn(['data'], state2)
         .mergeIn(['data', `${action.resource}s`], fromJS(action.payload.entities[`${action.resource}s`]));
+    }
     case actionTypes.REMOVE_SUCCESS:
       return state.setIn(['data', `${action.resource}s`, action.payload], undefined);
 

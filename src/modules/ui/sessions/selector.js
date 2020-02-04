@@ -27,6 +27,8 @@ export const selectTimetable = createSelector(
           schedule: generated.map(({ time, week }) => {
             const lab = state.data.labs[current.lab];
             const existingSession = lab.schedule_set.some(existingScheduleId => {
+              const schedule = state.data.schedules[existingScheduleId];
+              if (!schedule) return false;
               const diff = moment(state.data.schedules[existingScheduleId].time).diff(moment(time), 'days');
               return diff >= 0 && diff <= 1;
             });

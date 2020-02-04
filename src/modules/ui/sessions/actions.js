@@ -1,4 +1,4 @@
-import { fetch, create } from '@/entities/actions';
+import { fetch, create, destroy } from '@/entities/actions';
 import { actionTypes } from './constant';
 import { timetable, course, schedule } from './schema';
 import { batch } from 'react-redux';
@@ -26,4 +26,13 @@ export const addSession = body => async dispatch => {
       dispatch({ type: actionTypes.ADD_DATA, entity: 'session', payload: data.result });
     }),
   );
+};
+
+export const deleteSession = id => async dispatch => {
+  dispatch({
+    type: actionTypes.REMOVE_DATA,
+    entity: 'session',
+    payload: id,
+  });
+  dispatch(destroy(id, { resource: 'schedule' }));
 };

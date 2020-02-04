@@ -10,4 +10,6 @@ export default class ScheduleService extends BaseService {
   detail = async id => this.requestUtil.request({ method: 'get', path: `schedules/${id}` });
 
   create = async body => this.requestUtil.request({ method: 'post', path: 'schedules', data: body });
+
+  destroy = async id => this.requestUtil.request({ method: 'delete', path: `schedules/${id}` });
 }
