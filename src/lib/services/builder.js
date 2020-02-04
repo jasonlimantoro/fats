@@ -26,6 +26,14 @@ export const builder = config => {
   };
 };
 
-const serviceRegistry = builder({ baseUrl: '/api' });
+const isProd = process.env.NODE_ENV === 'production';
+const isRemote = process.env.REMOTE === 'true';
+
+let backendUrl = '';
+if (isProd || isRemote) {
+  backendUrl = process.env.BACKEND_URL;
+}
+
+const serviceRegistry = builder({ baseUrl: `${backendUrl}/api` });
 
 export default serviceRegistry;

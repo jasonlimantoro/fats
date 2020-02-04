@@ -62,5 +62,11 @@ module.exports = {
       '@': commonPaths.moduleDirPath,
     },
   },
-  plugins: [new webpack.ProgressPlugin()],
+  plugins: [
+    new webpack.ProgressPlugin(),
+    new webpack.EnvironmentPlugin({
+      BACKEND_URL: 'https://fats-project-2020.appspot.com',
+      REMOTE: process.env.REMOTE,
+    }),
+  ],
 };

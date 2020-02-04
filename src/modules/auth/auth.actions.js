@@ -1,11 +1,9 @@
 import { tryCatch } from 'lib/utils';
 import { routes } from 'config/routes';
-import AuthService from './auth.service';
+import serviceRegistry from 'lib/services/builder';
 import { actionTypes } from './auth.constants';
 
-const service = new AuthService({
-  baseUrl: '/api',
-});
+const service = serviceRegistry.services.auth;
 
 export const login = (body, history) => async dispatch => {
   dispatch({ type: actionTypes.LOGIN_BEGIN, payload: body });
