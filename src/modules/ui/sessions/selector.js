@@ -5,6 +5,12 @@ import moment from 'moment';
 
 import isEmpty from 'lodash/isEmpty';
 
+const selectSessionIds = state => state.ui.sessions.get('sessionIds');
+const selectSessionIdsJS = createSelector(
+  selectSessionIds,
+  state => state.toJS(),
+);
+
 export const selectTimetable = createSelector(
   selectDataJS,
   state => {
@@ -53,11 +59,14 @@ export const selectTimetable = createSelector(
 
 export const selectRecentSessions = createSelector(
   selectDataJS,
-  state => {
-    if (isEmpty(state.data.schedules)) return [];
-    return Object.values(state.data.schedules).map(s => ({
-      ...s,
-      lab: state.data.labs[s.lab],
-    }));
+  selectSessionIdsJS,
+  (state, ids) => {
+    return ids.map(id => {
+      const schedule = state.data.schedules[id];
+      return {
+        ...schedule,
+        lab: state.data.labs[schedule.lab],
+      };
+    });
   },
 );

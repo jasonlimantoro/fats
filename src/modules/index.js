@@ -4,6 +4,7 @@ import auth from '@/auth';
 import attendance from '@/attendance';
 import schedule from '@/schedule';
 import entities from '@/entities';
+import ui from '@/ui';
 
 export default combineReducers({
   counter,
@@ -11,4 +12,5 @@ export default combineReducers({
   attendance,
   schedule,
   entities,
+  ui,
 });

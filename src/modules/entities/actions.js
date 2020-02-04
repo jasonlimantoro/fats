@@ -1,9 +1,9 @@
-import { tryCatch } from 'lib/utils';
+import { tryCatch, noop } from 'lib/utils';
 import serviceRegistry from 'lib/services/builder';
 import { normalize } from 'normalizr';
 import { actionTypes } from './constant';
 
-export const fetch = ({ resource, shouldNormalize = true, schema } = {}) => async dispatch => {
+export const fetch = ({ resource, shouldNormalize = true, schema } = {}, cb = noop) => async dispatch => {
   dispatch({
     type: actionTypes.FETCH_BEGIN,
     resource,
@@ -17,9 +17,11 @@ export const fetch = ({ resource, shouldNormalize = true, schema } = {}) => asyn
         processedData = normalize(processedData, schema);
       }
       dispatch({ type: actionTypes.FETCH_SUCCESS, resource, payload: processedData, scope: 'list' });
+      cb(processedData);
     },
     errorFn(err) {
       dispatch({ type: actionTypes.FETCH_FAILURE, resource, payload: err, scope: 'list' });
+      cb(err);
     },
   });
 };
