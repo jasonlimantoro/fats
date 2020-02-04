@@ -47,7 +47,11 @@ export const detail = (id, { resource, shouldNormalize = true, schema } = {}) =>
   });
 };
 
-export const create = (body, { resource, shouldNormalize = true, schema } = {}) => async dispatch => {
+export const create = (
+  body,
+  { resource, shouldNormalize = true, schema } = {},
+  cb = noop,
+) => async dispatch => {
   dispatch({
     type: actionTypes.ADD_BEGIN,
     payload: body,
@@ -62,9 +66,11 @@ export const create = (body, { resource, shouldNormalize = true, schema } = {}) 
         processedData = normalize(processedData, schema);
       }
       dispatch({ type: actionTypes.ADD_SUCCESS, payload: processedData, scope: 'create', resource });
+      cb(processedData);
     },
     errorFn(err) {
       dispatch({ type: actionTypes.ADD_FAILURE, payload: err, scope: 'create', resource });
+      cb(err);
     },
   });
 };

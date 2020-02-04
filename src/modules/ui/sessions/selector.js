@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { selectDataJS } from '@/entities/selectors';
 import { generate } from 'lib/timetableGenerator';
 import moment from 'moment';
-
 import isEmpty from 'lodash/isEmpty';
 
 const selectSessionIds = state => state.ui.sessions.get('sessionIds');
@@ -18,17 +17,13 @@ export const selectTimetable = createSelector(
     const allTimetables = Object.values(state.data.timetables).reduce((accum, current) => {
       const generated = generate({
         ...current,
-        semester: {
-          ...state.data.semesters[current.semester],
-        },
+        semester: state.data.semesters[current.semester],
       });
       return {
         ...accum,
         [current.lab]: {
           ...current,
-          lab: {
-            ...state.data.labs[current.lab],
-          },
+          lab: state.data.labs[current.lab],
           schedule: generated.map(({ time, week }) => {
             const lab = state.data.labs[current.lab];
             const existingSession = lab.schedule_set.some(existingScheduleId => {

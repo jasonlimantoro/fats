@@ -1,4 +1,4 @@
-import { fetch } from '@/entities/actions';
+import { fetch, create } from '@/entities/actions';
 import { actionTypes } from './constant';
 import { timetable, course, schedule } from './schema';
 import { batch } from 'react-redux';
@@ -18,4 +18,12 @@ export const feedData = () => async dispatch => {
       }),
     );
   });
+};
+
+export const addSession = body => async dispatch => {
+  dispatch(
+    create(body, { resource: 'schedule', schema: schedule }, data => {
+      dispatch({ type: actionTypes.ADD_DATA, entity: 'session', payload: data.result });
+    }),
+  );
 };

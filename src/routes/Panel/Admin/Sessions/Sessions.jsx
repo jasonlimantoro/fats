@@ -5,19 +5,22 @@ import cls from 'classnames';
 import moment from 'moment';
 import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { Link, Route, Switch } from 'react-router-dom';
-import { feedData } from '@/ui/sessions/actions';
+import { feedData, addSession } from '@/ui/sessions/actions';
 import { selectTimetable, selectRecentSessions } from '@/ui/sessions/selector';
 import { routes } from 'config/routes';
 import { reverse } from 'named-urls';
 import SessionDetailRoutes from 'routes/Panel/Admin/SessionDetail/routes';
 
-const Sessions = ({ schedules, match, feedData, timetables }) => {
+const Sessions = ({ schedules, match, feedData, timetables, addSession }) => {
   React.useEffect(
     () => {
       feedData();
     },
     [feedData],
   );
+  const handleAddSession = body => {
+    addSession(body);
+  };
   const { url } = match;
   return (
     <div>
@@ -115,7 +118,16 @@ const Sessions = ({ schedules, match, feedData, timetables }) => {
                                       })}
                                     >
                                       {label} (Week {week}){' '}
-                                      <button disabled={past} className="btn btn-gray">
+                                      <button
+                                        onClick={() =>
+                                          handleAddSession({
+                                            time: `${label} ${s.start_at}`,
+                                            lab: s.lab.index,
+                                          })
+                                        }
+                                        disabled={past}
+                                        className="btn btn-gray"
+                                      >
                                         Add Session
                                       </button>
                                     </li>
@@ -161,6 +173,7 @@ Sessions.propTypes = {
   schedules: PropTypes.array,
   match: PropTypes.object,
   feedData: PropTypes.func.isRequired,
+  addSession: PropTypes.func.isRequired,
   timetables: PropTypes.array.isRequired,
 };
 
@@ -170,7 +183,7 @@ const mapStateToProps = state => ({
   schedules: selectRecentSessions(state),
   timetables: selectTimetable(state),
 });
-const mapDispatchToProps = { feedData };
+const mapDispatchToProps = { feedData, addSession };
 
 export default connect(
   mapStateToProps,

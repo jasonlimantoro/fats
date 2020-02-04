@@ -66,6 +66,16 @@ const attendanceReducer = (state = {}, action) => {
   return state;
 };
 
+const scheduleReducer = (state = {}, action) => {
+  if (action.type === actionTypes.ADD_SUCCESS && action.resource === 'schedule') {
+    return state.updateIn(
+      ['labs', action.payload.entities.schedules[action.payload.result].lab, 'schedule_set'],
+      ids => ids.push(action.payload.result),
+    );
+  }
+  return state;
+};
+
 export default function(state = initialState, action) {
   const scope = new ScopedKey(action.scope);
   switch (action.type) {
@@ -88,6 +98,7 @@ export default function(state = initialState, action) {
     case actionTypes.ADD_SUCCESS:
       return state
         .set('data', attendanceReducer(state.get('data'), action))
+        .set('data', scheduleReducer(state.get('data'), action))
         .mergeIn(['data', `${action.resource}s`], fromJS(action.payload.entities[`${action.resource}s`]));
     case actionTypes.REMOVE_SUCCESS:
       return state.setIn(['data', `${action.resource}s`, action.payload], undefined);
