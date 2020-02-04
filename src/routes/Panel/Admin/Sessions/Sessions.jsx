@@ -107,14 +107,17 @@ const Sessions = ({ schedules, match, feedData, timetables }) => {
                               <td className="column">{s.lab.name}</td>
                               <td className="column">
                                 <ul>
-                                  {s.schedule.map(({ label, past }) => (
+                                  {s.schedule.map(({ label, past, week }) => (
                                     <li
                                       key={label}
-                                      className={cls({
+                                      className={cls('py-4', {
                                         'line-through italic text-gray-700': past,
                                       })}
                                     >
-                                      {label}
+                                      {label} (Week {week}){' '}
+                                      <button disabled={past} className="btn btn-gray">
+                                        Add Session
+                                      </button>
                                     </li>
                                   ))}
                                 </ul>

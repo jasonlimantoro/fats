@@ -21,9 +21,13 @@ export const generate = timetable => {
   // pivot moment
   const firstLabMoment = moment(firstWeekMoment).add(timetable.day, 'days');
   const weeks = generateWeek(timetable.start_week, timetable.end_week, timetable.week);
-  return weeks.map(w =>
-    moment(firstLabMoment)
-      .add(w - 1, 'weeks')
-      .format('YYYY-MM-DD'),
-  );
+  const ntuweek = range(timetable.start_week, timetable.end_week, timetable.week === 'all' ? 1 : 2);
+  return weeks.map((w, idx) => {
+    return {
+      time: moment(firstLabMoment)
+        .add(w - 1, 'weeks')
+        .format('YYYY-MM-DD'),
+      week: ntuweek[idx],
+    };
+  });
 };

@@ -3,19 +3,25 @@
   &:focus {
     @apply outline-none shadow-outline;
   }
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
 }
 .btn-indigo {
   @apply bg-indigo-500 text-white;
-  &:hover {
+  &:hover:not(:disabled) {
     @apply bg-indigo-400;
   }
   &:active {
     @apply bg-indigo-700;
   }
+  &.btn-disabled:hover {
+    @apply bg-indigo-500;
+  }
 }
 .btn-gray {
   @apply bg-gray-700 text-white;
-  &:hover {
+  &:hover:not(:disabled) {
     @apply bg-gray-600;
   }
   &:active {

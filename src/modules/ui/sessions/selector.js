@@ -23,14 +23,15 @@ export const selectTimetable = createSelector(
           lab: {
             ...state.data.labs[current.lab],
           },
-          schedule: generated.map(s => {
+          schedule: generated.map(({ time, week }) => {
             const lab = state.data.labs[current.lab];
             const existingSession = lab.schedule_set.some(existingScheduleId => {
-              const diff = moment(state.data.schedules[existingScheduleId].time).diff(moment(s), 'days');
+              const diff = moment(state.data.schedules[existingScheduleId].time).diff(moment(time), 'days');
               return diff >= 0 && diff <= 1;
             });
             return {
-              label: s,
+              week,
+              label: time,
               past: existingSession,
             };
           }),

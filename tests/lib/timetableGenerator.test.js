@@ -24,7 +24,14 @@ describe('Timetable Generator', () => {
     };
     const actual = generate(timetable);
     // odd week from week 3 - week 11, skipping the eighth week (recess week)
-    const expected = ['2020-01-29', '2020-02-12', '2020-02-26', '2020-03-18', '2020-04-01', '2020-04-15'];
+    const expected = [
+      { time: '2020-01-29', week: 3 },
+      { time: '2020-02-12', week: 5 },
+      { time: '2020-02-26', week: 7 },
+      { time: '2020-03-18', week: 9 },
+      { time: '2020-04-01', week: 11 },
+      { time: '2020-04-15', week: 13 },
+    ];
     expect(actual).toEqual(expected);
   });
 
@@ -46,7 +53,13 @@ describe('Timetable Generator', () => {
       },
     };
     const actual = generate(timetable);
-    const expected = ['2020-02-06', '2020-02-20', '2020-03-12', '2020-03-26', '2020-04-09'];
+    const expected = [
+      { time: '2020-02-06', week: 4 },
+      { time: '2020-02-20', week: 6 },
+      { time: '2020-03-12', week: 8 },
+      { time: '2020-03-26', week: 10 },
+      { time: '2020-04-09', week: 12 },
+    ];
     expect(actual).toEqual(expected);
   });
 });
