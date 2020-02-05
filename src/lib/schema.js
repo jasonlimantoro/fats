@@ -16,8 +16,6 @@ export const createLab = (definition = {}, options = {}) =>
     },
   );
 
-export const createSchedule = (definition = {}, options = {}) =>
-  new schema.Entity('schedules', { lab: createLab(), ...definition }, options);
 export const createCourse = (definition = {}, options = {}) =>
   new schema.Entity('courses', { labs: [createLab()], ...definition }, options);
 
@@ -26,3 +24,10 @@ export const createTimetable = (definition = {}, options = {}) =>
 
 export const createAttendance = (definition = {}, options = {}) =>
   new schema.Entity('attendances', { student: createStudent(), ...definition }, options);
+
+export const createSchedule = (definition = {}, options = {}) =>
+  new schema.Entity(
+    'schedules',
+    { lab: createLab(), attendances: [createAttendance()], ...definition },
+    options,
+  );
