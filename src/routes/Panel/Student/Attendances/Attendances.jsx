@@ -2,15 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import cls from 'classnames';
-import { selectAttendances } from '@/attendance/attendance.selector';
-import { list } from '@/attendance/attendance.actions';
+import { feedData } from '@/ui/student/overview/actions';
+import { selectAttendances } from '@/ui/student/overview/selector';
 
-const Attendances = ({ attendances, list }) => {
+const Attendances = ({ attendances, feedData }) => {
   React.useEffect(
     () => {
-      list();
+      feedData();
     },
-    [list],
+    [feedData],
   );
 
   return (
@@ -34,10 +34,10 @@ const Attendances = ({ attendances, list }) => {
                 'bg-gray-300': idx % 2 === 0,
               })}
             >
-              <td className="border border-gray-400 py-2 px-4">{a.course}</td>
-              <td className="border border-gray-400 py-2 px-4">{a.index}</td>
-              <td className="border border-gray-400 py-2 px-4">{a.group}</td>
-              <td className="border border-gray-400 py-2 px-4">{a.time}</td>
+              <td className="border border-gray-400 py-2 px-4">{a.lab.course}</td>
+              <td className="border border-gray-400 py-2 px-4">{a.lab.index}</td>
+              <td className="border border-gray-400 py-2 px-4">{a.lab.name}</td>
+              <td className="border border-gray-400 py-2 px-4">{a.created_at}</td>
             </tr>
           ))}
         </tbody>
@@ -48,7 +48,7 @@ const Attendances = ({ attendances, list }) => {
 
 Attendances.propTypes = {
   attendances: PropTypes.array.isRequired,
-  list: PropTypes.func.isRequired,
+  feedData: PropTypes.func.isRequired,
 };
 
 Attendances.defaultProps = {};
@@ -56,7 +56,7 @@ Attendances.defaultProps = {};
 const mapStateToProps = state => ({
   attendances: selectAttendances(state),
 });
-const mapDispatchToProps = { list };
+const mapDispatchToProps = { feedData };
 
 export default connect(
   mapStateToProps,

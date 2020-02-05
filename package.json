@@ -40,7 +40,7 @@
     "named-urls": "^2.0.0",
     "normalizr": "^3.5.0",
     "prop-types": "15.7.0",
-    "query-string": "^6.4.2",
+    "query-string": "^6.10.1",
     "react": "^16.12.0",
     "react-breadcrumbs-dynamic": "^1.2.1",
     "react-dom": "^16.12.0",

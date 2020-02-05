@@ -1,11 +1,7 @@
 import RequestUtilService from './request-util';
 
 export default class BaseService {
-  constructor({
-    baseUrl,
-    requestUtilConfig,
-    RequestUtil = RequestUtilService,
-  } = {}) {
+  constructor({ baseUrl, requestUtilConfig, RequestUtil = RequestUtilService } = {}) {
     this.baseUrl = baseUrl;
     this.requestUtil = new RequestUtil({ baseUrl, ...requestUtilConfig });
   }

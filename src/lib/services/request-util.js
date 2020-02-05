@@ -1,4 +1,5 @@
 import axios from 'axios';
+import qs from 'query-string';
 
 export default class RequestUtilService {
   constructor({ baseUrl }) {
@@ -8,9 +9,9 @@ export default class RequestUtilService {
 
   getConfig = config => config;
 
-  request = ({ method = 'get', path, data, config = {} } = {}) => {
+  request = ({ method = 'get', path, data, queryParams = '', config = {} } = {}) => {
     const finalConfig = this.getConfig(config);
-    const finalPath = `${this.baseUrl}/${path}/`;
+    const finalPath = `${this.baseUrl}/${path}/?${qs.stringify(queryParams)}`;
     switch (method) {
       case 'get':
         return axios.get(finalPath, finalConfig);

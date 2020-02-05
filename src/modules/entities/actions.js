@@ -3,14 +3,17 @@ import serviceRegistry from 'lib/services/builder';
 import { normalize } from 'normalizr';
 import { actionTypes } from './constant';
 
-export const fetch = ({ resource, shouldNormalize = true, schema } = {}, cb = noop) => async dispatch => {
+export const fetch = (
+  { resource, shouldNormalize = true, schema, requestConfig = {} } = {},
+  cb = noop,
+) => async dispatch => {
   dispatch({
     type: actionTypes.FETCH_BEGIN,
     resource,
     scope: 'list',
   });
   const service = serviceRegistry.services[resource];
-  await tryCatch(() => service.list(), {
+  await tryCatch(() => service.list(requestConfig), {
     successFn(resp) {
       let processedData = resp.data;
       if (shouldNormalize) {

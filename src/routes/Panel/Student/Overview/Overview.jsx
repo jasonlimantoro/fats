@@ -4,19 +4,19 @@ import cls from 'classnames';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { routes } from 'config/routes';
-import { list } from '@/attendance/attendance.actions';
+import { feedData } from '@/ui/student/overview/actions';
 import {
-  createSelectFirstNAttendances,
-  selectAllAttendancesCount,
-  selectMissedAttendanceCount,
-} from '@/attendance/attendance.selector';
+  selectRecentAttendances,
+  selectTotalAttendancesCount,
+  selectMissedAttendancesCount,
+} from '@/ui/student/overview/selector';
 
-const Overview = ({ list, recentAttendances, total, missed }) => {
+const Overview = ({ recentAttendances, total, missed, feedData }) => {
   React.useEffect(
     () => {
-      list();
+      feedData();
     },
-    [list],
+    [feedData],
   );
   return (
     <div>
@@ -33,10 +33,7 @@ const Overview = ({ list, recentAttendances, total, missed }) => {
       </div>
       <div className="flex">
         <h2 className="text-2xl text-gray-800 font-bold">Recent Attendances</h2>
-        <Link
-          to={routes.panel.student.attendances}
-          className="ml-6 btn btn-gray"
-        >
+        <Link to={routes.panel.student.attendances} className="ml-6 btn btn-gray">
           View More
         </Link>
       </div>
@@ -58,10 +55,10 @@ const Overview = ({ list, recentAttendances, total, missed }) => {
                   'bg-gray-300': idx % 2 === 0,
                 })}
               >
-                <td className="border border-gray-400 py-2 px-4">{a.course}</td>
-                <td className="border border-gray-400 py-2 px-4">{a.index}</td>
-                <td className="border border-gray-400 py-2 px-4">{a.group}</td>
-                <td className="border border-gray-400 py-2 px-4">{a.time}</td>
+                <td className="border border-gray-400 py-2 px-4">{a.lab.course}</td>
+                <td className="border border-gray-400 py-2 px-4">{a.lab.index}</td>
+                <td className="border border-gray-400 py-2 px-4">{a.lab.name}</td>
+                <td className="border border-gray-400 py-2 px-4">{a.created_at}</td>
               </tr>
             ))}
           </tbody>
@@ -72,7 +69,7 @@ const Overview = ({ list, recentAttendances, total, missed }) => {
 };
 
 Overview.propTypes = {
-  list: PropTypes.func.isRequired,
+  feedData: PropTypes.func.isRequired,
   total: PropTypes.number.isRequired,
   missed: PropTypes.number.isRequired,
   recentAttendances: PropTypes.array.isRequired,
@@ -81,11 +78,11 @@ Overview.propTypes = {
 Overview.defaultProps = {};
 
 const mapStateToProps = () => state => ({
-  recentAttendances: createSelectFirstNAttendances(5)(state),
-  total: selectAllAttendancesCount(state),
-  missed: selectMissedAttendanceCount(state),
+  recentAttendances: selectRecentAttendances(state),
+  total: selectTotalAttendancesCount(state),
+  missed: selectMissedAttendancesCount(state),
 });
-const mapDispatchToProps = { list };
+const mapDispatchToProps = { feedData };
 
 export default connect(
   mapStateToProps,
