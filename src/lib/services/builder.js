@@ -1,10 +1,10 @@
-import AuthService from '@/auth/auth.service';
-import AttendanceService from '@/attendance/attendance.service';
-import ScheduleService from '@/schedule/schedule.service';
-import LabService from '@/lab/lab.service';
-import CourseService from '@/course/course.service';
-import StudentService from '@/student/student.service';
-import TimetableService from '@/timetable/timetable.service';
+import AuthService from '@/auth/service';
+import AttendanceService from '@/attendance/service';
+import ScheduleService from '@/schedule/service';
+import LabService from '@/lab/service';
+import CourseService from '@/course/service';
+import StudentService from '@/student/service';
+import TimetableService from '@/timetable/service';
 
 export const builder = config => {
   const services = {
