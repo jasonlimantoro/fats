@@ -5,6 +5,7 @@ import LabService from '@/lab/service';
 import CourseService from '@/course/service';
 import StudentService from '@/student/service';
 import TimetableService from '@/timetable/service';
+import CameraService from '@/camera/service';
 
 export const builder = config => {
   const services = {
@@ -15,6 +16,7 @@ export const builder = config => {
     course: new CourseService(config),
     student: new StudentService(config),
     timetable: new TimetableService(config),
+    camera: new CameraService(config),
   };
   return {
     services,
