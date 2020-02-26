@@ -10,14 +10,21 @@ const initialState = fromJS({
    *   height: {float}
    *   class_name: {String}
    * }
+   * Student = {
+   *   user_id: {String}
+   *   username: {String}
+   *   email: {String}
+   * }
    *
    * detectionResponse = {
    *   meta: {Object}
    *   detections: [Detection],
+   *   student: {Student}
    * }
    */
   detectionResponse: {
     detections: [],
+    student: {},
   },
   detectionLoading: false,
   detectionError: {},

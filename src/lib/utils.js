@@ -52,3 +52,5 @@ export const mergeDeep = (a, b) => {
     return acc.set(index, nextItem);
   }, a);
 };
+
+export const toPercentage = value => Math.round(value * 100);
