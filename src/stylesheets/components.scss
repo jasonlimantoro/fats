@@ -19,6 +19,32 @@
     @apply bg-indigo-500;
   }
 }
+.btn-red {
+  @apply bg-red-500 text-white;
+  &:hover:not(:disabled) {
+    @apply bg-red-400;
+  }
+  &:active {
+    @apply bg-red-700;
+  }
+  &.btn-disabled:hover {
+    @apply bg-red-500;
+  }
+}
+
+.btn-green {
+  @apply bg-green-500 text-white;
+  &:hover:not(:disabled) {
+    @apply bg-green-400;
+  }
+  &:active {
+    @apply bg-green-700;
+  }
+  &.btn-disabled:hover {
+    @apply bg-green-500;
+  }
+}
+
 .btn-gray {
   @apply bg-gray-700 text-white;
   &:hover:not(:disabled) {

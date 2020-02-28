@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { detect } from '@/camera/actions';
 import { selectDetectionsJS, selectDetectedStudent } from '@/camera/selector';
 import { toPercentage } from 'lib/utils';
+import Modal from 'components/Modal';
 
 const VIDEO_CONSTRAINTS = {
   audio: false,
@@ -20,6 +21,13 @@ const Camera = ({ detect, detections, student }) => {
   const videoRef = React.useRef(null);
   const imageRef = React.useRef(null);
   const drawRef = React.useRef(null);
+  const [showModal, setShowModal] = React.useState(false);
+  React.useEffect(
+    () => {
+      setShowModal(!!student.username);
+    },
+    [student],
+  );
   const handleVideo = stream => {
     videoRef.current.srcObject = stream;
   };
@@ -131,6 +139,23 @@ const Camera = ({ detect, detections, student }) => {
           />
         </div>
       </div>
+      <Modal
+        className="flex flex-col border-4"
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        type={student.username ? 'success' : 'error'}
+        timeout={5000}
+      >
+        <Modal.Header className="mb-4 text-center">
+          <p className="font-bold text-2xl">
+            {student.username ? 'Success' : 'Error while performing the recognition'}
+          </p>
+        </Modal.Header>
+        <Modal.Body className="flex-1 flex justify-center my-4">
+          {student.username ? <p>Welcome, {student.username}!</p> : <p>Some error occurs</p>}
+        </Modal.Body>
+        <Modal.DismissButton>{({ countDown }) => `OK (dismissing in ${countDown}s...)`}</Modal.DismissButton>
+      </Modal>
     </div>
   );
 };
