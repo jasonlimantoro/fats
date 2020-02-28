@@ -17,16 +17,45 @@ const VIDEO_CONSTRAINTS = {
 const UPLOAD_WIDTH = VIDEO_CONSTRAINTS.video.width.ideal;
 const UPLOAD_HEIGHT = VIDEO_CONSTRAINTS.video.height.ideal;
 
+const COUNTDOWN = 10;
 const Camera = ({ detect, detections, student }) => {
   const videoRef = React.useRef(null);
   const imageRef = React.useRef(null);
   const drawRef = React.useRef(null);
   const [showModal, setShowModal] = React.useState(false);
+  const [detected, setDetected] = React.useState(null);
+  const [countDown, setCountDown] = React.useState(COUNTDOWN);
+  const [detectionError, setDetectionError] = React.useState('');
+
   React.useEffect(
     () => {
-      setShowModal(!!student.username);
+      if (countDown === 0) {
+        setDetected(false);
+        setShowModal(true);
+        setDetectionError('No student detected');
+      }
     },
-    [student],
+    [countDown],
+  );
+  React.useEffect(
+    () => {
+      const timeout = setTimeout(() => {
+        if (detected === true || countDown === 0) return;
+        setCountDown(count => count - 1);
+      }, 1000);
+      return () => {
+        clearTimeout(timeout);
+      };
+    },
+    [countDown, detected],
+  );
+  React.useEffect(
+    () => {
+      const foundStudent = !!student.username;
+      setShowModal(foundStudent);
+      setDetected(foundStudent);
+    },
+    [student.username],
   );
   const handleVideo = stream => {
     videoRef.current.srcObject = stream;
@@ -143,7 +172,7 @@ const Camera = ({ detect, detections, student }) => {
         className="flex flex-col border-4"
         show={showModal}
         onClose={() => setShowModal(false)}
-        type={student.username ? 'success' : 'error'}
+        type={detected ? 'success' : 'error'}
         timeout={5000}
       >
         <Modal.Header className="mb-4 text-center">
@@ -152,7 +181,11 @@ const Camera = ({ detect, detections, student }) => {
           </p>
         </Modal.Header>
         <Modal.Body className="flex-1 flex justify-center my-4">
-          {student.username ? <p>Welcome, {student.username}!</p> : <p>Some error occurs</p>}
+          {detected ? (
+            <p>Welcome, {student.username}!</p>
+          ) : (
+            <p>{detectionError || 'Oh snap! Some image detection has some issues'}</p>
+          )}
         </Modal.Body>
         <Modal.DismissButton>{({ countDown }) => `OK (dismissing in ${countDown}s...)`}</Modal.DismissButton>
       </Modal>
