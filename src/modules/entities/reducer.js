@@ -10,6 +10,7 @@ const initialState = fromJS({
     students: {},
     courses: {},
     timetables: {},
+    semesters: {},
   },
   result: '',
   status: {
@@ -52,6 +53,10 @@ const initialState = fromJS({
       detailError: false,
       createLoading: false,
       createError: false,
+    },
+    semester: {
+      fetchLoading: false,
+      fetchError: false,
     },
   },
 });
