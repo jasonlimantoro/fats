@@ -124,7 +124,7 @@ const Sessions = ({ schedules, match, feedData, timetables, addSession, deleteSe
                               <td className="column">{s.lab.name}</td>
                               <td className="column">
                                 <ul>
-                                  {s.schedule.map(({ label, past, week }) => (
+                                  {s.completeSchedule.map(({ label, past, week }) => (
                                     <li
                                       key={label}
                                       className={cls('py-4', {
