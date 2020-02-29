@@ -14,8 +14,13 @@ const semesterToString = ({ number, year_start }) => {
 };
 
 const timetableToString = (timetable, lab) => {
-  return `${timetable.lab}-${lab.course}-${lab.name}`;
+  return `${timetable.lab}-${lab.course}-${lab.name} (${timetable.start_at}-${timetable.end_at})`;
 };
+
+const scheduleToString = schedule => {
+  return `${schedule.label} (Week ${schedule.week})`;
+};
+
 const Home = ({ history, feedData, formData }) => {
   React.useEffect(
     () => {
@@ -50,27 +55,40 @@ const Home = ({ history, feedData, formData }) => {
                 })}
               />
             </div>
-            <div className="mb-4">
-              <Field
-                id="timetable"
-                disabled={!values.semester}
-                component={SelectField}
-                name="timetable"
-                label="Timetable"
-                options={
-                  values.semester
-                    ? formData.semesters[values.semester].timetable_set.map(id => ({
-                        value: id,
-                        // label: formData.timetables[id].lab,
-                        label: timetableToString(
-                          formData.timetables[id],
-                          formData.labs[formData.timetables[id].lab],
-                        ),
-                      }))
-                    : []
-                }
-              />
-            </div>
+            {values.semester && (
+              <div className="mb-4">
+                <Field
+                  id="timetable"
+                  disabled={!values.semester}
+                  component={SelectField}
+                  name="timetable"
+                  label="Timetable"
+                  options={formData.semesters[values.semester].timetable_set.map(id => ({
+                    value: id,
+                    label: timetableToString(
+                      formData.timetables[id],
+                      formData.labs[formData.timetables[id].lab],
+                    ),
+                  }))}
+                />
+              </div>
+            )}
+            {values.timetable && (
+              <div className="mb-4">
+                <Field
+                  id="schedule"
+                  component={SelectField}
+                  name="schedule"
+                  label="Schedule"
+                  options={formData.labs[formData.timetables[values.timetable].lab].completeSchedule
+                    .filter(({ past }) => past)
+                    .map(s => ({
+                      label: scheduleToString(s),
+                      value: s.label,
+                    }))}
+                />
+              </div>
+            )}
             <button type="submit" className="btn w-full btn-gray">
               Submit
             </button>

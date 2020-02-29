@@ -1,4 +1,6 @@
 import { List } from 'immutable';
+import moment from 'moment';
+import { generate } from './timetableGenerator';
 
 export const noop = () => {};
 export const tryCatch = async (fn, { successFn = noop, errorFn = noop } = {}) => {
@@ -54,3 +56,31 @@ export const mergeDeep = (a, b) => {
 };
 
 export const toPercentage = value => Math.round(value * 100);
+
+export const calculateLabIndexCompleteSchedule = ({ timetables, labs, schedules, semesters }) => {
+  return Object.values(timetables).reduce((accum, current) => {
+    const generated = generate({
+      ...current,
+      semester: semesters[current.semester],
+    });
+    return {
+      ...accum,
+      [current.lab]: {
+        completeSchedule: generated.map(({ time, week }) => {
+          const lab = labs[current.lab];
+          const existingSession = lab.schedule_set.some(existingScheduleId => {
+            const schedule = schedules[existingScheduleId];
+            if (!schedule) return false;
+            const diff = moment(schedules[existingScheduleId].time).diff(moment(time), 'days');
+            return diff >= 0 && diff <= 1;
+          });
+          return {
+            week,
+            label: time,
+            past: existingSession,
+          };
+        }),
+      },
+    };
+  }, {});
+};
