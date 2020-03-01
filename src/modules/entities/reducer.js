@@ -108,7 +108,7 @@ export default function(state = initialState, action) {
         .mergeIn(['data', `${action.resource}s`], fromJS(action.payload.entities[`${action.resource}s`]));
     }
     case actionTypes.REMOVE_SUCCESS:
-      return state.setIn(['data', `${action.resource}s`, action.payload], undefined);
+      return state.setIn(['data', `${action.resource}s`, String(action.payload)], undefined);
 
     case actionTypes.UPDATE_FAILURE:
     case actionTypes.FETCH_FAILURE:
