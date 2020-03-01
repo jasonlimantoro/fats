@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Switch } from 'react-router-dom';
-import ProtectedRoute from 'routes/ProtectedRoute';
+import AuthGuard from 'routes/Guard/AuthGuard';
 import StudentPanel from './Student';
 import AdminPanel from './Admin';
 
@@ -9,16 +9,8 @@ const Panel = ({ match }) => {
   const { url } = match;
   return (
     <Switch>
-      <ProtectedRoute
-        requiredDomains={['student']}
-        path={`${url}/student`}
-        component={StudentPanel}
-      />
-      <ProtectedRoute
-        requiredDomains={['admin']}
-        path={`${url}/admin`}
-        component={AdminPanel}
-      />
+      <AuthGuard requiredDomains={['student']} path={`${url}/student`} component={StudentPanel} />
+      <AuthGuard requiredDomains={['admin']} path={`${url}/admin`} component={AdminPanel} />
     </Switch>
   );
 };

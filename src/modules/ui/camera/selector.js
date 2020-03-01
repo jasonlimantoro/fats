@@ -8,6 +8,8 @@ export const selectActiveSessionJS = createSelector(
   state => state.toJS(),
 );
 
+export const selectHasActiveSession = state => state.ui.camera.get('hasActiveSession');
+
 export const selectAttendancePayload = createSelector(
   selectDataJS,
   selectActiveSessionJS,
