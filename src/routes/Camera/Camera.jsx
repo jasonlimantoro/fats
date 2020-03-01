@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import useDeepCompareEffect from 'use-deep-compare-effect';
 import { detect } from '@/camera/actions';
 import { selectDetectionsJS, selectDetectedStudent } from '@/camera/selector';
+import { take } from '@/ui/camera/actions';
+import { selectAttendancePayload } from '@/ui/camera/selector';
 import { toPercentage } from 'lib/utils';
 import Modal from 'components/Modal';
 
@@ -18,7 +21,7 @@ const UPLOAD_WIDTH = VIDEO_CONSTRAINTS.video.width.ideal;
 const UPLOAD_HEIGHT = VIDEO_CONSTRAINTS.video.height.ideal;
 
 const COUNTDOWN = 10;
-const Camera = ({ detect, detections, student }) => {
+const Camera = ({ detect, detections, student, take, attendancePayload }) => {
   const videoRef = React.useRef(null);
   const imageRef = React.useRef(null);
   const drawRef = React.useRef(null);
@@ -49,13 +52,19 @@ const Camera = ({ detect, detections, student }) => {
     },
     [countDown, detected],
   );
-  React.useEffect(
+  useDeepCompareEffect(
     () => {
       const foundStudent = !!student.username;
       setShowModal(foundStudent);
       setDetected(foundStudent);
+      if (foundStudent) {
+        take({
+          ...attendancePayload,
+          student: student.user_id,
+        });
+      }
     },
-    [student.username],
+    [student, take, attendancePayload],
   );
   const handleVideo = stream => {
     videoRef.current.srcObject = stream;
@@ -197,6 +206,8 @@ Camera.propTypes = {
   detect: PropTypes.func.isRequired,
   detections: PropTypes.array.isRequired,
   student: PropTypes.object.isRequired,
+  take: PropTypes.func.isRequired,
+  attendancePayload: PropTypes.object.isRequired,
 };
 
 Camera.defaultProps = {};
@@ -204,9 +215,10 @@ Camera.defaultProps = {};
 const mapStateToProps = state => ({
   detections: selectDetectionsJS(state),
   student: selectDetectedStudent(state),
+  attendancePayload: selectAttendancePayload(state),
 });
 
-const mapDispatchToProps = { detect };
+const mapDispatchToProps = { detect, take };
 export default connect(
   mapStateToProps,
   mapDispatchToProps,

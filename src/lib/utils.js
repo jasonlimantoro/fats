@@ -68,16 +68,22 @@ export const calculateLabIndexCompleteSchedule = ({ timetables, labs, schedules,
       [current.lab]: {
         completeSchedule: generated.map(({ time, week }) => {
           const lab = labs[current.lab];
+          let relatedSchedule = null;
           const existingSession = lab.schedule_set.some(existingScheduleId => {
             const schedule = schedules[existingScheduleId];
             if (!schedule) return false;
             const diff = moment(schedules[existingScheduleId].time).diff(moment(time), 'days');
-            return diff >= 0 && diff <= 1;
+            const oneDay = diff >= 0 && diff <= 1;
+            if (oneDay) {
+              relatedSchedule = existingScheduleId;
+            }
+            return oneDay;
           });
           return {
             week,
             label: time,
             past: existingSession,
+            relatedSchedule,
           };
         }),
       },

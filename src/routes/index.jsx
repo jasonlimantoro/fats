@@ -11,7 +11,7 @@ export default () => (
   <Switch>
     <Route exact path={routes.home} component={Home} />
     <GuestRoute path={routes.login} component={Login} />
-    <Route path={routes.camera.semester} component={Camera} />
+    <Route path={routes.camera} component={Camera} />
     <Route path="/panel" component={Panel} />
     <Route render={({ location: { pathname } }) => <div>{pathname} - not found</div>} />
   </Switch>

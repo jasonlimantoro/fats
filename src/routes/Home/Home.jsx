@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
 import SelectField from 'components/Form/SelectField';
-import { reverse } from 'named-urls';
 import { routes } from 'config/routes';
-import { initialValues, validationSchema } from './schema';
 import { feedData } from '@/ui/home/actions';
 import { selectFormData } from '@/ui/home/selector';
+import { setSession } from '@/ui/camera/actions';
+import { initialValues, validationSchema } from './schema';
 
 const semesterToString = ({ number, year_start }) => {
   return `AY ${year_start}/${year_start + 1} Semester ${number}`;
@@ -21,7 +21,7 @@ const scheduleToString = schedule => {
   return `${schedule.label} (Week ${schedule.week})`;
 };
 
-const Home = ({ history, feedData, formData }) => {
+const Home = ({ history, feedData, formData, setSession }) => {
   React.useEffect(
     () => {
       feedData();
@@ -34,7 +34,8 @@ const Home = ({ history, feedData, formData }) => {
       <Formik
         initialValues={initialValues}
         onSubmit={values => {
-          history.push(reverse(String(routes.camera.semester), { semesterId: values.semester }));
+          setSession(values);
+          history.push(routes.camera);
         }}
         validationSchema={validationSchema}
       >
@@ -84,7 +85,7 @@ const Home = ({ history, feedData, formData }) => {
                     .filter(({ past }) => past)
                     .map(s => ({
                       label: scheduleToString(s),
-                      value: s.label,
+                      value: s.relatedSchedule,
                     }))}
                 />
               </div>
@@ -103,13 +104,14 @@ Home.propTypes = {
   history: PropTypes.object.isRequired,
   feedData: PropTypes.func.isRequired,
   formData: PropTypes.object.isRequired,
+  setSession: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   formData: selectFormData(state),
 });
 
-const mapDispatchToProps = { feedData };
+const mapDispatchToProps = { feedData, setSession };
 
 export default connect(
   mapStateToProps,

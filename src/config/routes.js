@@ -3,9 +3,7 @@ import { include } from 'named-urls';
 export const routes = {
   home: '/',
   login: '/login',
-  camera: include('/camera/', {
-    semester: ':semesterId',
-  }),
+  camera: '/camera',
   panel: include('/panel/', {
     student: include('student/', {
       overview: 'overview',
