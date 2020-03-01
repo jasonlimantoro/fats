@@ -1,5 +1,0 @@
-export const actionTypes = {
-  SET_BEGIN: 'LAB/SET_BEGIN',
-  SET_SUCCESS: 'LAB/SET_SUCCESS',
-  SET_FAILURE: 'LAB/SET_FAILURE',
-};
