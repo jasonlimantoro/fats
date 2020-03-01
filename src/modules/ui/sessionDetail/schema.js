@@ -1,23 +1,16 @@
-import { schema } from 'normalizr';
+import { createStudent, createLab, createAttendance, createSchedule } from 'lib/schema';
 
-const student = new schema.Entity(
-  'students',
-  {},
-  {
-    idAttribute: 'user_id',
-    processStrategy(value, parent, key) {
-      // from attendance record
-      if (key === 'student') {
-        return {
-          ...value,
-          attendanceId: parent.id,
-        };
-      }
-      return value;
-    },
-  },
-);
-const lab = new schema.Entity('labs', { students: [student] }, { idAttribute: 'index' });
-const attendance = new schema.Entity('attendances', { student });
-
-export const schedule = new schema.Entity('schedules', { lab, attendances: [attendance] });
+const studentProcessStrategy = (value, parent, key) => {
+  // from attendance record
+  if (key === 'student') {
+    return {
+      ...value,
+      attendanceId: parent.id,
+    };
+  }
+  return value;
+};
+const student = createStudent({}, { processStrategy: studentProcessStrategy });
+const lab = createLab({ students: [student] });
+const attendance = createAttendance({ student });
+export const schedule = createSchedule({ lab, attendances: [attendance] });

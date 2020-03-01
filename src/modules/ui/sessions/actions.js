@@ -1,14 +1,14 @@
 import { fetch, create, destroy } from '@/entities/actions';
 import { actionTypes } from './constant';
-import { timetable, course, schedule } from './schema';
+import { createTimetable, createCourse, createSchedule } from 'lib/schema';
 import { batch } from 'react-redux';
 
 export const feedData = () => async dispatch => {
   batch(() => {
-    dispatch(fetch({ resource: 'timetable', schema: [timetable] }));
-    dispatch(fetch({ resource: 'course', schema: [course] }));
+    dispatch(fetch({ resource: 'timetable', schema: [createTimetable()] }));
+    dispatch(fetch({ resource: 'course', schema: [createCourse()] }));
     dispatch(
-      fetch({ resource: 'schedule', schema: [schedule] }, data => {
+      fetch({ resource: 'schedule', schema: [createSchedule()] }, data => {
         dispatch({
           type: actionTypes.FEED_DATA,
           payload: {
@@ -22,7 +22,7 @@ export const feedData = () => async dispatch => {
 
 export const addSession = body => async dispatch => {
   dispatch(
-    create(body, { resource: 'schedule', schema: schedule }, data => {
+    create(body, { resource: 'schedule', schema: createSchedule() }, data => {
       dispatch({ type: actionTypes.ADD_DATA, entity: 'session', payload: data.result });
     }),
   );
