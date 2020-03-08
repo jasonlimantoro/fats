@@ -2,11 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import useDeepCompareEffect from 'use-deep-compare-effect';
-import { detect } from '@/camera/actions';
+import { detect, resetDetection } from '@/camera/actions';
 import { selectDetectedStudent, selectDetectionMessage, selectSortedDetectionJS } from '@/camera/selector';
 import { take } from '@/ui/camera/actions';
-import { selectActiveSessionDetailJS, selectAttendancePayload } from '@/ui/camera/selector';
+import {
+  selectActiveSessionDetailJS,
+  selectAttendancePayload,
+  selectIsAttendanceTaken,
+  selectTakeAttendanceError,
+} from '@/ui/camera/selector';
 import { toPercentage, wait } from 'lib/utils';
+import { debounce } from 'throttle-debounce';
 import Modal from 'components/Modal';
 
 const VIDEO_CONSTRAINTS = {
@@ -20,8 +26,10 @@ const VIDEO_CONSTRAINTS = {
 const UPLOAD_WIDTH = VIDEO_CONSTRAINTS.video.width.ideal;
 const UPLOAD_HEIGHT = VIDEO_CONSTRAINTS.video.height.ideal;
 
-const COUNTDOWN = 10;
+const COUNTDOWN = 30;
 const MODAL_DELAY = 5000;
+const ACCURACY_THRESHOLD = 90;
+
 const Camera = ({
   detect,
   detections,
@@ -30,6 +38,9 @@ const Camera = ({
   attendancePayload,
   activeSessionDetail,
   detectionMessage,
+  resetDetection,
+  attendanceError,
+  isAttendanceTaken,
 }) => {
   const videoRef = React.useRef(null);
   const imageRef = React.useRef(null);
@@ -37,7 +48,6 @@ const Camera = ({
   const [showModal, setShowModal] = React.useState(false);
   const [detected, setDetected] = React.useState(null);
   const [countDown, setCountDown] = React.useState(COUNTDOWN);
-  const [detectionError, setDetectionError] = React.useState('');
 
   // Timeout
   React.useEffect(
@@ -46,7 +56,6 @@ const Camera = ({
         if (countDown === 0) {
           setDetected(false);
           setShowModal(true);
-          setDetectionError(detectionMessage || 'No student is detected');
           await wait(MODAL_DELAY);
           setCountDown(COUNTDOWN);
         }
@@ -68,46 +77,6 @@ const Camera = ({
     },
     [countDown, detected],
   );
-  // take attendance when found valid student
-  useDeepCompareEffect(
-    () => {
-      const foundStudent = !!student.username;
-      setShowModal(foundStudent);
-      setDetected(foundStudent);
-      if (foundStudent) {
-        take({
-          ...attendancePayload,
-          student: student.user_id,
-        });
-      }
-    },
-    [student, take, attendancePayload],
-  );
-  const handleVideo = stream => {
-    videoRef.current.srcObject = stream;
-  };
-
-  const handleVideoError = e => {
-    // eslint-disable-next-line no-console
-    console.log(e);
-  };
-
-  const handleCloseModal = React.useCallback(() => {
-    setShowModal(false);
-  }, []);
-  React.useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia(VIDEO_CONSTRAINTS)
-      .then(handleVideo)
-      .catch(handleVideoError);
-    const videoDom = videoRef.current;
-    return () => {
-      videoDom.srcObject.getTracks().forEach(track => {
-        track.stop();
-      });
-    };
-  }, []);
-
   const startDetection = React.useCallback(
     () => {
       const drawCanvas = drawRef.current;
@@ -131,11 +100,10 @@ const Camera = ({
         UPLOAD_WIDTH,
         UPLOAD_HEIGHT,
       );
-      imageCanvas.toBlob(file => detect(file, attendancePayload), 'image/jpeg');
+      imageCanvas.toBlob(file => detect(file, attendancePayload.lab), 'image/jpeg');
     },
-    [detect, attendancePayload],
+    [detect, attendancePayload.lab],
   );
-
   React.useEffect(
     () => {
       const detection = detections[0] || {};
@@ -153,14 +121,72 @@ const Camera = ({
         ctx.fillText(detection.class_name + ' - ' + score + '%', x + 5, y + 20);
         ctx.strokeRect(x, y, width, height);
       };
-      if (detections.length > 0 && toPercentage(detections[0].score) < 100) {
-        startDetection();
-      }
-      drawBoxes();
+      const interval = setInterval(() => {
+        if (showModal) return;
+        if (
+          detections.length === 0 ||
+          (detections.length > 0 && toPercentage(detection.score) < ACCURACY_THRESHOLD)
+        ) {
+          startDetection();
+        }
+        drawBoxes();
+      }, 2000);
+      return () => {
+        clearInterval(interval);
+      };
     },
-    [detections, startDetection, detected],
+    [detections, startDetection, detected, showModal],
   );
+  useDeepCompareEffect(
+    () => {
+      const onSuccess = debounce(MODAL_DELAY + 2, false, () => {
+        const foundStudent = !!student.username;
+        setDetected(foundStudent);
+        if (foundStudent && toPercentage(detections[0].score) >= ACCURACY_THRESHOLD) {
+          if (confirm('Taking attendance')) {
+            take({
+              ...attendancePayload,
+              student: student.user_id,
+            });
+            setCountDown(COUNTDOWN);
+            setShowModal(true);
+          }
+        }
+      });
+      onSuccess();
+    },
+    [student, take, attendancePayload],
+  );
+  const handleVideo = stream => {
+    videoRef.current.srcObject = stream;
+  };
 
+  const handleVideoError = e => {
+    // eslint-disable-next-line no-console
+    console.log(e);
+  };
+
+  const handleCloseModal = React.useCallback(
+    () => {
+      setShowModal(false);
+      resetDetection();
+    },
+    [resetDetection],
+  );
+  React.useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia(VIDEO_CONSTRAINTS)
+      .then(handleVideo)
+      .catch(handleVideoError);
+    const videoDom = videoRef.current;
+    return () => {
+      videoDom.srcObject.getTracks().forEach(track => {
+        track.stop();
+      });
+    };
+  }, []);
+
+  const isSuccess = isAttendanceTaken && !attendanceError && student.username;
   return (
     <div className="flex flex-col items-center px-8">
       <p className="text-2xl font-bold">
@@ -198,19 +224,19 @@ const Camera = ({
         className="flex flex-col border-4"
         show={showModal}
         onClose={handleCloseModal}
-        type={detected ? 'success' : 'error'}
+        type={isSuccess ? 'success' : 'error'}
         timeout={MODAL_DELAY}
       >
         <Modal.Header className="mb-4 text-center">
           <p className="font-bold text-2xl">
-            {student.username ? 'Success' : 'Error while performing the recognition'}
+            {isSuccess ? 'Success' : 'Error while performing the recognition'}
           </p>
         </Modal.Header>
         <Modal.Body className="flex-1 flex justify-center my-4">
-          {detected ? (
+          {isSuccess ? (
             <p>Welcome, {student.username}!</p>
           ) : (
-            <p>{detectionError || 'Oh snap! Some image detection has some issues'}</p>
+            <p>Error: {detectionMessage || attendanceError || 'No Student detected in the camera'}</p>
           )}
         </Modal.Body>
         <Modal.DismissButton>{({ countDown }) => `OK (dismissing in ${countDown}s...)`}</Modal.DismissButton>
@@ -227,19 +253,24 @@ Camera.propTypes = {
   attendancePayload: PropTypes.object.isRequired,
   activeSessionDetail: PropTypes.object.isRequired,
   detectionMessage: PropTypes.string,
+  resetDetection: PropTypes.func.isRequired,
+  attendanceError: PropTypes.string,
+  isAttendanceTaken: PropTypes.bool.isRequired,
 };
 
 Camera.defaultProps = {};
 
-const mapStateToProps = state => ({
+const mapStateToProps = () => state => ({
   detections: selectSortedDetectionJS(state),
   student: selectDetectedStudent(state),
   detectionMessage: selectDetectionMessage(state),
   attendancePayload: selectAttendancePayload(state),
   activeSessionDetail: selectActiveSessionDetailJS(state),
+  attendanceError: selectTakeAttendanceError(state),
+  isAttendanceTaken: selectIsAttendanceTaken(state),
 });
 
-const mapDispatchToProps = { detect, take };
+const mapDispatchToProps = { detect, take, resetDetection };
 export default connect(
   mapStateToProps,
   mapDispatchToProps,

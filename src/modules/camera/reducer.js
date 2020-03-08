@@ -20,11 +20,13 @@ const initialState = fromJS({
    *   meta: {Object}
    *   detections: [Detection],
    *   student: {Student}
+   *   message: {string}
    * }
    */
   detectionResponse: {
     detections: [],
     student: {},
+    message: '',
   },
   detectionLoading: false,
   detectionError: {},
@@ -39,12 +41,16 @@ export default function reducer(state = initialState, action) {
       return state
         .set('detectionLoading', false)
         .set('detectionResponse', fromJS(action.payload))
-        .set('detectionError', initialState.get('detectionError'));
+        .set('detectionError', initialState.get('detectionError'))
+        .set('detectionLoaded', true);
     case actionTypes.DETECT_FAILURE:
       return state
         .set('detectionLoading', false)
         .set('detectionResponse', initialState.get('detectionResponse'))
-        .set('detectionError', fromJS(action.payload));
+        .set('detectionError', fromJS(action.payload))
+        .set('detectionLoaded', true);
+    case actionTypes.DETECT_RESET:
+      return initialState;
     default:
       return state;
   }

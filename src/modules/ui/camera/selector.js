@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { selectDataJS } from '@/entities/selectors';
+import { selectDataJS, createSelectStatusJS } from '@/entities/selectors';
 import moment from 'moment';
 import { DATETIME_FORMAT } from 'config/format';
 
@@ -34,4 +34,14 @@ export const selectAttendancePayload = createSelector(
       created_at: moment().format(DATETIME_FORMAT.ISO),
     };
   },
+);
+
+export const selectTakeAttendanceError = createSelector(
+  createSelectStatusJS('attendance', 'create'),
+  status => status?.response?.data?.non_field_errors?.[0] || '',
+);
+
+export const selectIsAttendanceTaken = createSelector(
+  createSelectStatusJS('attendance', 'create', 'loaded'),
+  status => status,
 );
