@@ -4,9 +4,10 @@ import { actionTypes } from './constant';
 
 const service = serviceRegistry.services.camera;
 
-export const detect = file => async dispatch => {
+export const detect = (file, { lab }) => async dispatch => {
   const formData = new FormData();
   formData.append('image', file);
+  formData.append('lab', lab);
   dispatch({
     type: actionTypes.DETECT_BEGIN,
   });

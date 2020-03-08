@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 import { detect } from '@/camera/actions';
-import { selectDetectionsJS, selectDetectedStudent } from '@/camera/selector';
+import { selectDetectedStudent, selectDetectionMessage, selectSortedDetectionJS } from '@/camera/selector';
 import { take } from '@/ui/camera/actions';
-import { selectAttendancePayload } from '@/ui/camera/selector';
-import { toPercentage } from 'lib/utils';
+import { selectActiveSessionDetailJS, selectAttendancePayload } from '@/ui/camera/selector';
+import { toPercentage, wait } from 'lib/utils';
 import Modal from 'components/Modal';
 
 const VIDEO_CONSTRAINTS = {
@@ -21,7 +21,16 @@ const UPLOAD_WIDTH = VIDEO_CONSTRAINTS.video.width.ideal;
 const UPLOAD_HEIGHT = VIDEO_CONSTRAINTS.video.height.ideal;
 
 const COUNTDOWN = 10;
-const Camera = ({ detect, detections, student, take, attendancePayload }) => {
+const MODAL_DELAY = 5000;
+const Camera = ({
+  detect,
+  detections,
+  student,
+  take,
+  attendancePayload,
+  activeSessionDetail,
+  detectionMessage,
+}) => {
   const videoRef = React.useRef(null);
   const imageRef = React.useRef(null);
   const drawRef = React.useRef(null);
@@ -30,28 +39,36 @@ const Camera = ({ detect, detections, student, take, attendancePayload }) => {
   const [countDown, setCountDown] = React.useState(COUNTDOWN);
   const [detectionError, setDetectionError] = React.useState('');
 
+  // Timeout
   React.useEffect(
     () => {
-      if (countDown === 0) {
-        setDetected(false);
-        setShowModal(true);
-        setDetectionError('No student detected');
-      }
+      const reset = async () => {
+        if (countDown === 0) {
+          setDetected(false);
+          setShowModal(true);
+          setDetectionError(detectionMessage || 'No student is detected');
+          await wait(MODAL_DELAY);
+          setCountDown(COUNTDOWN);
+        }
+      };
+      reset();
     },
-    [countDown],
+    [countDown, detectionMessage],
   );
+  // Decreasing timeout count
   React.useEffect(
     () => {
-      const timeout = setTimeout(() => {
+      const interval = setInterval(() => {
         if (detected === true || countDown === 0) return;
         setCountDown(count => count - 1);
       }, 1000);
       return () => {
-        clearTimeout(timeout);
+        clearInterval(interval);
       };
     },
     [countDown, detected],
   );
+  // take attendance when found valid student
   useDeepCompareEffect(
     () => {
       const foundStudent = !!student.username;
@@ -75,6 +92,9 @@ const Camera = ({ detect, detections, student, take, attendancePayload }) => {
     console.log(e);
   };
 
+  const handleCloseModal = React.useCallback(() => {
+    setShowModal(false);
+  }, []);
   React.useEffect(() => {
     navigator.mediaDevices
       .getUserMedia(VIDEO_CONSTRAINTS)
@@ -111,48 +131,45 @@ const Camera = ({ detect, detections, student, take, attendancePayload }) => {
         UPLOAD_WIDTH,
         UPLOAD_HEIGHT,
       );
-      imageCanvas.toBlob(file => detect(file), 'image/jpeg');
+      imageCanvas.toBlob(file => detect(file, attendancePayload), 'image/jpeg');
     },
-    [detect],
+    [detect, attendancePayload],
   );
 
   React.useEffect(
     () => {
+      const detection = detections[0] || {};
       const drawBoxes = () => {
         const ctx = drawRef.current.getContext('2d');
         const drawCanvas = drawRef.current;
         ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-        detections.forEach(detection => {
-          let x = detection.x * drawCanvas.width;
-          const y = detection.y * drawCanvas.height;
-          const width = detection.width * drawCanvas.width - x;
-          const height = detection.height * drawCanvas.height - y;
-          // mirrored
-          x = drawCanvas.width - (x + width);
-          const score = toPercentage(detection.score);
-          ctx.fillText(detection.class_name + ' - ' + score + '%', x + 5, y + 20);
-          ctx.strokeRect(x, y, width, height);
-        });
+        let x = detection.x * drawCanvas.width;
+        const y = detection.y * drawCanvas.height;
+        const width = detection.width * drawCanvas.width - x;
+        const height = detection.height * drawCanvas.height - y;
+        // mirrored
+        x = drawCanvas.width - (x + width);
+        const score = toPercentage(detection.score);
+        ctx.fillText(detection.class_name + ' - ' + score + '%', x + 5, y + 20);
+        ctx.strokeRect(x, y, width, height);
       };
-      if (!student || (detections.length > 0 && toPercentage(detections[0].score) < 100)) {
+      if (detections.length > 0 && toPercentage(detections[0].score) < 100) {
         startDetection();
       }
       drawBoxes();
     },
-    [detections, startDetection, student],
+    [detections, startDetection, detected],
   );
 
   return (
     <div className="flex flex-col items-center px-8">
-      {student.username ? (
-        <div className="w-full py-4 px-3 my-4 border border-gray-600 rounded bg-green-500 text-white text-center text-2xl">
-          Welcome {student.username}!!!
-        </div>
-      ) : (
-        <div className="w-full py-4 px-3 my-4 border border-gray-600 rounded bg-gray-600 text-white text-center text-2xl">
-          Please stand in front of the camera
-        </div>
-      )}
+      <p className="text-2xl font-bold">
+        Attendance for {activeSessionDetail.lab?.course}-{activeSessionDetail.lab?.index}-
+        {activeSessionDetail.lab?.name}
+      </p>
+      <p>
+        {activeSessionDetail.timetable?.start_at} - {activeSessionDetail.timetable?.end_at}
+      </p>
       <div className="flex justify-center">
         <div className="relative">
           <video
@@ -180,9 +197,9 @@ const Camera = ({ detect, detections, student, take, attendancePayload }) => {
       <Modal
         className="flex flex-col border-4"
         show={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={handleCloseModal}
         type={detected ? 'success' : 'error'}
-        timeout={5000}
+        timeout={MODAL_DELAY}
       >
         <Modal.Header className="mb-4 text-center">
           <p className="font-bold text-2xl">
@@ -208,14 +225,18 @@ Camera.propTypes = {
   student: PropTypes.object.isRequired,
   take: PropTypes.func.isRequired,
   attendancePayload: PropTypes.object.isRequired,
+  activeSessionDetail: PropTypes.object.isRequired,
+  detectionMessage: PropTypes.string,
 };
 
 Camera.defaultProps = {};
 
 const mapStateToProps = state => ({
-  detections: selectDetectionsJS(state),
+  detections: selectSortedDetectionJS(state),
   student: selectDetectedStudent(state),
+  detectionMessage: selectDetectionMessage(state),
   attendancePayload: selectAttendancePayload(state),
+  activeSessionDetail: selectActiveSessionDetailJS(state),
 });
 
 const mapDispatchToProps = { detect, take };

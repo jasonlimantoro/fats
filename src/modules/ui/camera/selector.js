@@ -1,11 +1,25 @@
 import { createSelector } from 'reselect';
 import { selectDataJS } from '@/entities/selectors';
+import moment from 'moment';
+import { DATETIME_FORMAT } from 'config/format';
 
 const selectActiveSession = state => state.ui.camera.get('activeSession');
 
 export const selectActiveSessionJS = createSelector(
   selectActiveSession,
   state => state.toJS(),
+);
+
+export const selectActiveSessionDetailJS = createSelector(
+  selectDataJS,
+  selectActiveSessionJS,
+  ({ data }, activeSession) => {
+    const timetable = data.timetables[activeSession.timetable];
+    return {
+      timetable,
+      lab: data.labs[timetable.lab],
+    };
+  },
 );
 
 export const selectHasActiveSession = state => state.ui.camera.get('hasActiveSession');
@@ -17,7 +31,7 @@ export const selectAttendancePayload = createSelector(
     return {
       lab: data.timetables[activeSession.timetable].lab,
       schedule: activeSession.schedule,
-      created_at: data.schedules[activeSession.schedule].time,
+      created_at: moment().format(DATETIME_FORMAT.ISO),
     };
   },
 );
