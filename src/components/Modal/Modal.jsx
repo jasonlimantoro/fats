@@ -1,29 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
-
-const types = {
-  success: {
-    main: 'bg-green-200',
-    text: 'text-green-700',
-    border: 'border-green-400',
-  },
-  error: {
-    main: 'bg-red-100',
-    text: 'text-red-700',
-    border: 'border-red-400',
-  },
-  info: {
-    main: 'bg-gray-100',
-    text: 'text-gray-700',
-    border: 'border-gray-400',
-  },
-};
-
-const getTypeStyle = (type, properties = ['text', 'border', 'main']) => {
-  const typeStyle = types[type];
-  return properties.reduce((accum, current) => cls(accum, typeStyle[current]), '');
-};
+import { getTypeStyle } from 'lib/helpers';
 
 const ModalContext = React.createContext();
 

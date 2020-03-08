@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { selectDataJS } from '@/entities/selectors';
 import moment from 'moment';
 import isEmpty from 'lodash/isEmpty';
+import { DATETIME_FORMAT } from 'config/format';
 
 export const selectSessionDetailUI = createSelector(
   selectDataJS,
@@ -38,7 +39,7 @@ export const selectStudentList = createSelector(
           ...student,
           matric: student.user_id,
           status: isLate ? 'late' : 'present',
-          time: moment(attendance.created_at).format('HH:mm'),
+          time: moment(attendance.created_at).format(DATETIME_FORMAT.DATETIME),
         };
       }
       return {

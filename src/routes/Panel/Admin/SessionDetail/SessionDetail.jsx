@@ -4,8 +4,14 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { deleteAttendance } from '@/ui/sessionDetail/actions';
 import { routes } from 'config/routes';
+import Label from 'components/Label';
 import { reverse } from 'named-urls';
 
+const statusToLabelStyle = {
+  late: 'warning',
+  absent: 'error',
+  present: 'success',
+};
 const SessionDetail = ({ id, deleteAttendance, studentList }) => {
   const handleDelete = id => {
     // eslint-disable-next-line no-restricted-globals,no-alert
@@ -37,7 +43,11 @@ const SessionDetail = ({ id, deleteAttendance, studentList }) => {
                 <tr key={s.matric}>
                   <td className="border border-gray-400 p-2">{s.matric}</td>
                   <td className="border border-gray-400 p-2">{s.email}</td>
-                  <td className="border border-gray-400 p-2">{s.status}</td>
+                  <td className="border border-gray-400 p-2 text-center">
+                    <Label type={statusToLabelStyle[s.status]} className="my-2">
+                      {s.status}
+                    </Label>
+                  </td>
                   <td className="border border-gray-400 p-2">{s.time}</td>
                   <td className="border border-gray-400 p-2">
                     {s.status !== 'absent' ? (
