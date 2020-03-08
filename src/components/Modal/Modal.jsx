@@ -27,26 +27,38 @@ const getTypeStyle = (type, properties = ['text', 'border', 'main']) => {
 
 const ModalContext = React.createContext();
 
+const modalStyle = {
+  width: 600,
+};
 const Modal = ({ show, onClose, className, children, type, timeout }) => {
   const [countDown, setCountDown] = React.useState(timeout / 1000);
   React.useEffect(
     () => {
-      if (countDown === 0) {
+      if (countDown === 0 && show) {
         onClose();
+        setCountDown(timeout / 1000);
       }
-      const timer = setTimeout(() => {
+    },
+    [countDown, timeout, onClose, show],
+  );
+
+  React.useEffect(
+    () => {
+      const interval = setInterval(() => {
         if (!timeout || !show) return;
         setCountDown(count => count - 1);
       }, 1000);
       return () => {
-        clearTimeout(timer);
+        clearInterval(interval);
       };
     },
-    [timeout, countDown, onClose, show],
+    [timeout, onClose, show],
   );
+  const context = React.useMemo(() => ({ type, onClose, countDown }), [type, onClose, countDown]);
+
   if (!show) return null;
   return (
-    <ModalContext.Provider value={{ type, onClose, countDown }}>
+    <ModalContext.Provider value={context}>
       <div className="absolute h-screen w-screen flex justify-center items-center">
         <div
           data-label="modal"
@@ -61,7 +73,7 @@ const Modal = ({ show, onClose, className, children, type, timeout }) => {
             getTypeStyle(type),
             className,
           )}
-          style={{ width: 600 }}
+          style={modalStyle}
         >
           {children}
         </div>
@@ -80,6 +92,8 @@ const Header = ({ children, className }) => {
   );
 };
 
+Header.displayName = 'Modal.Header';
+
 // eslint-disable-next-line react/prop-types
 const Body = ({ children, className }) => {
   const { type } = React.useContext(ModalContext);
@@ -89,20 +103,23 @@ const Body = ({ children, className }) => {
     </div>
   );
 };
+Body.displayName = 'Modal.Body';
+
+const btnClass = {
+  success: 'btn-green',
+  error: 'btn-red',
+};
 
 // eslint-disable-next-line react/prop-types
 const DismissButton = ({ children, className }) => {
   const { type, onClose, countDown } = React.useContext(ModalContext);
-  const btnClass = {
-    success: 'btn-green',
-    error: 'btn-red',
-  };
   return (
     <button onClick={onClose} className={cls('btn', btnClass[type], className)}>
       {children instanceof Function ? children({ countDown }) : children}
     </button>
   );
 };
+DismissButton.displayName = 'DismissButton';
 
 Modal.Header = Header;
 Modal.Body = Body;
