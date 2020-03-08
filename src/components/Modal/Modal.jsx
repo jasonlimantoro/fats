@@ -30,13 +30,14 @@ const ModalContext = React.createContext();
 const modalStyle = {
   width: 600,
 };
+const getInitialTimeOut = timeout => timeout / 1000;
 const Modal = ({ show, onClose, className, children, type, timeout }) => {
-  const [countDown, setCountDown] = React.useState(timeout / 1000);
+  const [countDown, setCountDown] = React.useState(() => getInitialTimeOut(timeout));
   React.useEffect(
     () => {
       if (countDown === 0 && show) {
         onClose();
-        setCountDown(timeout / 1000);
+        setCountDown(getInitialTimeOut(timeout));
       }
     },
     [countDown, timeout, onClose, show],
@@ -50,6 +51,7 @@ const Modal = ({ show, onClose, className, children, type, timeout }) => {
       }, 1000);
       return () => {
         clearInterval(interval);
+        setCountDown(getInitialTimeOut(timeout));
       };
     },
     [timeout, show],
