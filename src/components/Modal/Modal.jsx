@@ -52,7 +52,7 @@ const Modal = ({ show, onClose, className, children, type, timeout }) => {
         clearInterval(interval);
       };
     },
-    [timeout, onClose, show],
+    [timeout, show],
   );
   const context = React.useMemo(() => ({ type, onClose, countDown }), [type, onClose, countDown]);
 
