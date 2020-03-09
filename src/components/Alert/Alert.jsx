@@ -61,7 +61,7 @@ const Alert = ({ className, children, type, show, onClose }) => {
 // eslint-disable-next-line react/prop-types
 Alert.Title = ({ children }) => <p className={cls('font-bold')}>{children}</p>;
 // eslint-disable-next-line react/prop-types
-Alert.Body = ({ children }) => <p className={cls('text-sm')}>{children}</p>;
+Alert.Body = ({ children }) => <div className={cls('text-sm')}>{children}</div>;
 
 Alert.propTypes = {
   className: PropTypes.string,
