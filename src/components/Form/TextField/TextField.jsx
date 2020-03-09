@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
 
-const TextField = ({ field, form: { touched, errors }, label, id, ...rest }) => {
+const TextField = ({ field, form: { touched, errors }, label, id, className, ...rest }) => {
   return (
     <>
       <label className="label label-block" htmlFor={id}>
@@ -11,7 +11,7 @@ const TextField = ({ field, form: { touched, errors }, label, id, ...rest }) => 
       <input
         type="text"
         id={id}
-        className={cls('input', {
+        className={cls(className, 'input', {
           'border-red-500 border': !!(errors[field.name] && touched[field.name]),
         })}
         {...field}
@@ -28,6 +28,7 @@ TextField.propTypes = {
   field: PropTypes.object.isRequired,
   form: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,
+  className: PropTypes.string,
   id: PropTypes.string,
 };
 
