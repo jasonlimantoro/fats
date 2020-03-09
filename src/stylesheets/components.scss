@@ -64,6 +64,9 @@
 
 .input {
   @apply appearance-none shadow rounded py-2 px-4;
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
   &-block {
     @apply w-full;
   }
