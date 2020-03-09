@@ -11,7 +11,10 @@ export default class RequestUtilService {
 
   request = ({ method = 'get', path, data, queryParams = '', config = {} } = {}) => {
     const finalConfig = this.getConfig(config);
-    const finalPath = `${this.baseUrl}/${path}/?${qs.stringify(queryParams)}`;
+    let finalPath = `${this.baseUrl}/${path}/`;
+    if (queryParams) {
+      finalPath += `?${qs.stringify(queryParams)}`;
+    }
     switch (method) {
       case 'get':
         return axios.get(finalPath, finalConfig);
