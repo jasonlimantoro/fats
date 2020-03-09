@@ -5,8 +5,24 @@ import Dashboard from 'layouts/Dashboard';
 import { Formik, Form, Field } from 'formik';
 import { feedData, submit } from '@/ui/registerStudent/actions';
 import { selectDataSets } from '@/ui/registerStudent/selector';
-import SelectField from 'components/Form/SelectField';
+import { SelectField } from 'components/Form';
+import { createArrayToChoiceMapper } from 'lib/helpers';
 import { validationSchema, initialValues } from './schema';
+
+const studentMapper = createArrayToChoiceMapper({
+  valueTransform: el => el.user_id,
+  labelTransform: el => `${el.username} (${el.user_id})`,
+});
+
+const labMapper = createArrayToChoiceMapper({
+  valueTransform: el => el.index,
+  labelTransform: el => `${el.index} (${el.name})`,
+});
+
+const courseMapper = createArrayToChoiceMapper({
+  valueTransform: el => el.id,
+  labelTransform: el => `${el.id} (${el.name})`,
+});
 
 const RegisterStudent = ({ feedData, dataSets, submit }) => {
   React.useEffect(
@@ -24,35 +40,43 @@ const RegisterStudent = ({ feedData, dataSets, submit }) => {
           validationSchema={validationSchema}
           onSubmit={values => submit(values.index, values)}
         >
-          {() => (
-            <Form className="form-box w-1/3">
+          {({ values }) => (
+            <Form className="form-box w-1/2 my-4">
               <div className="mb-4">
                 <Field
                   name="course"
                   label="Course"
                   id="course"
                   component={SelectField}
-                  options={dataSets.courses}
+                  options={Object.values(dataSets.courses).map(courseMapper)}
                 />
               </div>
-              <div className="mb-4">
-                <Field
-                  name="index"
-                  label="Index"
-                  id="index"
-                  component={SelectField}
-                  options={dataSets.labs}
-                />
-              </div>
-              <div className="mb-4">
-                <Field
-                  name="student"
-                  label="Student"
-                  id="student"
-                  component={SelectField}
-                  options={dataSets.students}
-                />
-              </div>
+              {values.course && (
+                <div className="mb-4">
+                  <Field
+                    name="index"
+                    label="Index"
+                    id="index"
+                    component={SelectField}
+                    options={dataSets.courses[values.course].labs
+                      .map(index => dataSets.labs[index])
+                      .map(labMapper)}
+                  />
+                </div>
+              )}
+              {values.index && (
+                <div className="mb-4">
+                  <Field
+                    name="student"
+                    label="Student"
+                    id="student"
+                    component={SelectField}
+                    options={Object.values(dataSets.students)
+                      .filter(({ user_id }) => !dataSets.labs[values.index].students.includes(user_id))
+                      .map(studentMapper)}
+                  />
+                </div>
+              )}
               <button type="submit" className="btn btn-gray w-full">
                 Submit
               </button>
