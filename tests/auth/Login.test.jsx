@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderer } from 'tests/utils/renderer';
 import { fireEvent, waitForElement, wait } from '@testing-library/react';
-import { routes, apiRoutes } from 'config/routes';
+import { routes } from 'config/routes';
 import { Response } from 'miragejs';
 import { startMirage } from 'lib/mirage';
 import App from 'routes';
@@ -27,10 +27,7 @@ describe('Login', () => {
     expect(await findAllByText(/required/i)).toHaveLength(2);
   });
   it('should display error when the backend API returns error', async () => {
-    server.post(
-      apiRoutes.auth.login,
-      () => new Response(400, {}, { message: 'Invalid credentials' }),
-    );
+    server.post('/token', () => new Response(400, {}, { message: 'Invalid credentials' }));
     const { getByLabelText, getByTestId, getByText } = renderer(<App />, {
       route: routes.login,
     });
@@ -48,6 +45,7 @@ describe('Login', () => {
     await waitForElement(() => getByText(/failed/i));
   });
   it('should redirect to panel based on the domain', async () => {
+    server.createList('schedule', 20);
     const { getByLabelText, getByTestId, history } = renderer(<App />, {
       route: routes.login,
     });
