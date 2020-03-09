@@ -1,87 +1,9 @@
 import { fromJS } from 'immutable';
 import { ScopedKey, mergeDeep } from 'lib/utils';
 import { actionTypes } from './constant';
+import { state } from './core';
 
-const initialState = fromJS({
-  data: {
-    attendances: {},
-    schedules: {},
-    labs: {},
-    students: {},
-    courses: {},
-    timetables: {},
-    semesters: {},
-  },
-  result: '',
-  status: {
-    attendance: {
-      fetchLoading: false,
-      fetchError: false,
-      fetchLoaded: false,
-      detailLoading: false,
-      detailError: false,
-      detailLoaded: false,
-      createLoading: false,
-      createError: false,
-      createLoaded: false,
-    },
-    schedule: {
-      fetchLoading: false,
-      fetchError: false,
-      fetchLoaded: false,
-      detailLoading: false,
-      detailError: false,
-      detailLoaded: false,
-      createLoading: false,
-      createError: false,
-      createLoaded: false,
-    },
-    student: {
-      fetchLoading: false,
-      fetchError: false,
-      fetchLoaded: false,
-      detailLoading: false,
-      detailError: false,
-      detailLoaded: false,
-      createLoading: false,
-      createError: false,
-      createLoaded: false,
-    },
-    lab: {
-      fetchLoading: false,
-      fetchError: false,
-      fetchLoaded: false,
-      detailLoading: false,
-      detailError: false,
-      detailLoaded: false,
-      createLoading: false,
-      createError: false,
-      createLoaded: false,
-    },
-    course: {
-      fetchLoading: false,
-      fetchError: false,
-      fetchLoaded: false,
-      detailLoading: false,
-      detailError: false,
-      detailLoaded: false,
-      createLoading: false,
-      createError: false,
-      createLoaded: false,
-    },
-    semester: {
-      fetchLoading: false,
-      fetchError: false,
-      fetchLoaded: false,
-      detailLoading: false,
-      detailError: false,
-      detailLoaded: false,
-      createLoading: false,
-      createError: false,
-      createLoaded: false,
-    },
-  },
-});
+const initialState = fromJS(state);
 
 const attendanceReducer = (state = {}, action) => {
   if (action.type === actionTypes.ADD_SUCCESS && action.resource === 'attendance') {
@@ -119,11 +41,13 @@ export default function(state = initialState, action) {
     case actionTypes.DETAIL_SUCCESS:
       return state.updateIn(['data'], data => mergeDeep(data, fromJS(action.payload.entities)));
 
-    case actionTypes.UPDATE_SUCCESS:
-      return state.mergeIn(
-        ['data', `${action.resource}s`],
-        fromJS(action.payload.data.entities[`${action.resource}s`]),
-      );
+    case actionTypes.UPDATE_SUCCESS: {
+      const statusPath = ['status', action.resource];
+      return state
+        .mergeIn(['data', `${action.resource}s`], fromJS(action.payload.data.entities[`${action.resource}s`]))
+        .setIn([...statusPath, scope.loaded], true)
+        .setIn([...statusPath, scope.error], false);
+    }
     case actionTypes.ADD_SUCCESS: {
       const state1 = attendanceReducer(state.get('data'), action);
       const state2 = scheduleReducer(state1, action);
