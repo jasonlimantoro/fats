@@ -29,7 +29,7 @@ const Login = ({ login, loading, error, history }) => {
         onSubmit={values => login(values, history)}
       >
         {() => (
-          <Form className="bg-white rounded px-8 pt-6 pb-8 mb-4 w-1/3">
+          <Form className="form-box w-1/3">
             <Alert show={showAlert} title="Oh Snap!" type="error" onClose={onClose}>
               <Alert.Title>Oh Snap!</Alert.Title>
               <Alert.Body>{error.message}</Alert.Body>

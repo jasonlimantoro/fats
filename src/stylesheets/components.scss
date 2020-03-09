@@ -95,3 +95,7 @@
 .hflip {
   transform: scale(-1, 1);
 }
+
+.form-box {
+  @apply bg-white rounded px-8 pt-6 pb-8 mb-4;
+}
