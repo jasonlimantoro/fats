@@ -31,3 +31,13 @@ export const getTypeStyle = (type, types = defaultTypes, properties = ['text', '
   const typeStyle = types[type];
   return properties.reduce((accum, current) => cls(accum, typeStyle[current]), '');
 };
+
+export const identity = x => x;
+
+export const createArrayToChoiceMapper = ({
+  valueTransform = identity,
+  labelTransform = identity,
+} = {}) => el => ({
+  value: valueTransform(el),
+  label: labelTransform(el),
+});

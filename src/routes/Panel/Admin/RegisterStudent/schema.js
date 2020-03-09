@@ -5,3 +5,9 @@ export const validationSchema = Yup.object({
   index: Yup.string().required(),
   student: Yup.string().required(),
 });
+
+export const initialValues = {
+  course: '',
+  index: '',
+  student: '',
+};

@@ -1,24 +1,27 @@
 import { selectDataJS } from '@/entities/selectors';
 import { createSelector } from 'reselect';
 import isEmpty from 'lodash/isEmpty';
+import { createArrayToChoiceMapper } from 'lib/helpers';
 
 export const selectDataSets = createSelector(
   selectDataJS,
   state => {
     if (isEmpty(state.data.courses)) return { courses: [], labs: [], students: [] };
-    const labs = Object.values(state.data.labs).map(({ index, name }) => {
-      return {
-        value: index,
-        label: `${index} (${name})`,
-      };
+    const labMapper = createArrayToChoiceMapper({
+      valueTransform: el => el.index,
+      labelTransform: el => `${el.index} (${el.name})`,
     });
-    // eslint-disable-next-line camelcase
-    const students = Object.values(state.data.students).map(({ user_id, username }) => ({
-      value: user_id,
-      label: `${username} (${user_id})`,
-    }));
+    const labs = Object.values(state.data.labs).map(labMapper);
+
+    const studentMapper = createArrayToChoiceMapper({
+      valueTransform: el => el.user_id,
+      labelTransform: el => `${el.username} (${el.user_id})`,
+    });
+    const students = Object.values(state.data.students).map(studentMapper);
+    const courseMapper = createArrayToChoiceMapper();
+    const courses = Object.keys(state.data.courses).map(courseMapper);
     return {
-      courses: Object.keys(state.data.courses),
+      courses,
       labs,
       students,
     };
