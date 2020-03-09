@@ -12,7 +12,7 @@ export const feedData = () => async dispatch => {
         dispatch({
           type: actionTypes.FEED_DATA,
           payload: {
-            sessionIds: data.result || [],
+            sessionIds: data.result,
           },
         });
       }),

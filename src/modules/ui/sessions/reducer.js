@@ -8,7 +8,7 @@ const initialState = fromJS({
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.FEED_DATA:
-      return state.set('sessionIds', fromJS(action.payload.sessionIds));
+      return state.set('sessionIds', fromJS(action.payload.sessionIds || []));
     case actionTypes.ADD_DATA:
       return state.update(`${action.entity}Ids`, ids => ids.push(action.payload));
     case actionTypes.REMOVE_DATA:
