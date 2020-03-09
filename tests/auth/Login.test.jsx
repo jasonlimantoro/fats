@@ -45,7 +45,6 @@ describe('Login', () => {
     await waitForElement(() => getByText(/failed/i));
   });
   it('should redirect to panel based on the domain', async () => {
-    server.createList('schedule', 20);
     const { getByLabelText, getByTestId, history } = renderer(<App />, {
       route: routes.login,
     });
