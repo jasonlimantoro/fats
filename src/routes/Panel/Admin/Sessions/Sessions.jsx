@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import cls from 'classnames';
-import moment from 'moment';
 import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { feedData, addSession, deleteSession } from '@/ui/sessions/actions';
 import { selectTimetable, selectRecentSessions } from '@/ui/sessions/selector';
 import { routes } from 'config/routes';
-import { reverse } from 'named-urls';
 import SessionDetailRoutes from 'routes/Panel/Admin/SessionDetail/routes';
-import { TrashIcon, ViewIcon } from 'components/Icons';
+import Timetables from './Timetable';
+import RecentSessions from './RecentSessions';
 
 const Sessions = ({ schedules, match, feedData, timetables, addSession, deleteSession }) => {
   React.useEffect(
@@ -22,7 +20,7 @@ const Sessions = ({ schedules, match, feedData, timetables, addSession, deleteSe
   const handleAddSession = body => {
     addSession(body);
   };
-  const handleDelete = id => {
+  const handleDeleteSession = id => {
     if (confirm('Are you sure you want to delete this session?')) {
       deleteSession(id);
     }
@@ -39,133 +37,9 @@ const Sessions = ({ schedules, match, feedData, timetables, addSession, deleteSe
           path={url}
           render={() => (
             <div>
-              <p className="text-2xl font-bold">Recent Sessions</p>
-              <table className="table-auto w-full mt-4 text-center">
-                <thead className="text-gray-600">
-                  <tr>
-                    <th>No</th>
-                    <th>Course</th>
-                    <th>Index</th>
-                    <th>Group</th>
-                    <th>Time</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="text-gray-700">
-                  {schedules.map(({ id, time, lab: { course, index, name } }, idx) => (
-                    <tr
-                      key={id}
-                      className={cls({
-                        'bg-gray-300': idx % 2 === 0,
-                      })}
-                    >
-                      <td className="border border-gray-400 py-2 px-4">{idx + 1}</td>
-                      <td className="border border-gray-400 py-2 px-4">{course}</td>
-                      <td className="border border-gray-400 py-2 px-4">{index}</td>
-                      <td className="border border-gray-400 py-2 px-4">{name}</td>
-                      <td className="border border-gray-400 py-2 px-4">
-                        {moment(time).format('YYYY-MM-DD HH:mm')}
-                      </td>
-                      <td className="border border-gray-400 py-2 px-4 text-center">
-                        <Link
-                          className="inline-block"
-                          to={reverse(String(routes.panel.admin.sessions.detail), { sessionId: id })}
-                        >
-                          <ViewIcon className="h-4 w-4" />
-                        </Link>
-                        <button onClick={() => handleDelete(id)} className="text-gray-700 ml-6">
-                          <TrashIcon className="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <RecentSessions onDelete={handleDeleteSession} schedules={schedules} />
               <hr className="my-4" />
-              <p className="text-2xl font-bold">Schedule</p>
-              {timetables.length > 0 &&
-                timetables.map(
-                  (t, idx) =>
-                    t.schedules.length > 0 && (
-                      <div
-                        className={cls({
-                          'mt-4': idx !== 0,
-                        })}
-                        key={t.id}
-                      >
-                        <div className="my-2">
-                          <h1 className="text-xl underline">
-                            {t.id} - {t.name}
-                          </h1>
-                        </div>
-                        <table className="table-fixed">
-                          <thead>
-                            <tr>
-                              <th>Index</th>
-                              <th>Group</th>
-                              <th>Date</th>
-                              <th>Info</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {t.schedules.length > 0 ? (
-                              t.schedules.map(s => (
-                                <tr key={s.id}>
-                                  <td className="column">{s.lab.index}</td>
-                                  <td className="column">{s.lab.name}</td>
-                                  <td className="column">
-                                    <ul>
-                                      {s.completeSchedule.map(({ label, past, week }) => (
-                                        <li
-                                          key={label}
-                                          className={cls('py-4', {
-                                            'line-through italic text-gray-700': past,
-                                          })}
-                                        >
-                                          {label} (Week {week}){' '}
-                                          <button
-                                            onClick={() =>
-                                              handleAddSession({
-                                                time: `${label} ${s.start_at}`,
-                                                lab: s.lab.index,
-                                              })
-                                            }
-                                            disabled={past}
-                                            className="btn btn-gray"
-                                          >
-                                            Add Session
-                                          </button>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </td>
-                                  <td className="column">
-                                    <ul>
-                                      <li>
-                                        Weeks: {s.start_week} - {s.end_week}
-                                      </li>
-                                      <li>
-                                        Recurrence: <b>{s.week}</b> weeks
-                                      </li>
-                                      <li>
-                                        Time : {s.start_at} - {s.end_at}
-                                      </li>
-                                    </ul>
-                                  </td>
-                                </tr>
-                              ))
-                            ) : (
-                              <tr>
-                                <td className="column" colSpan={3}>
-                                  <p className="italic text-gray-600">No schedules are recorded</p>
-                                </td>
-                              </tr>
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    ),
-                )}
+              <Timetables timetables={timetables} onAddSession={handleAddSession} />
             </div>
           )}
         />
