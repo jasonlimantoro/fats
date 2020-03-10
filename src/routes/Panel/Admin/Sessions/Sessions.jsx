@@ -10,6 +10,7 @@ import { selectTimetable, selectRecentSessions } from '@/ui/sessions/selector';
 import { routes } from 'config/routes';
 import { reverse } from 'named-urls';
 import SessionDetailRoutes from 'routes/Panel/Admin/SessionDetail/routes';
+import { TrashIcon, ViewIcon } from 'components/Icons';
 
 const Sessions = ({ schedules, match, feedData, timetables, addSession, deleteSession }) => {
   React.useEffect(
@@ -70,22 +71,10 @@ const Sessions = ({ schedules, match, feedData, timetables, addSession, deleteSe
                           className="inline-block"
                           to={reverse(String(routes.panel.admin.sessions.detail), { sessionId: id })}
                         >
-                          <svg
-                            className="h-4 w-4 fill-current"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M.2 10a11 11 0 0 1 19.6 0A11 11 0 0 1 .2 10zm9.8 4a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0-2a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
-                          </svg>
+                          <ViewIcon className="h-4 w-4" />
                         </Link>
                         <button onClick={() => handleDelete(id)} className="text-gray-700 ml-6">
-                          <svg
-                            className="h-4 w-4 fill-current"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M6 2l2-2h4l2 2h4v2H2V2h4zM3 6h14l-1 14H4L3 6zm5 2v10h1V8H8zm3 0v10h1V8h-1z" />
-                          </svg>
+                          <TrashIcon className="h-4 w-4" />
                         </button>
                       </td>
                     </tr>
