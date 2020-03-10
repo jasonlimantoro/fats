@@ -53,6 +53,9 @@ const EditAttendance = ({ match, history, feedData, initialFormData, submit }) =
         >
           {() => (
             <Form className="form-box w-1/2 my-4">
+              <div className="flex justify-center">
+                <p className="text-2xl text-gray-700">Update Attendance</p>
+              </div>
               <div className="mb-4">
                 <Field id="lab" label="Lab" name="lab" className="w-full" component={TextField} disabled />
               </div>

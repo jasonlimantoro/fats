@@ -45,6 +45,9 @@ const AddAttendance = ({ match, history, sessionId, session, initialFormData, su
         >
           {() => (
             <Form className="form-box w-1/2 my-4">
+              <div className="flex justify-center">
+                <p className="text-2xl text-gray-700">Add Attendance</p>
+              </div>
               <div className="mb-4">
                 <Field id="lab" label="Lab" name="lab" className="w-full" component={TextField} disabled />
               </div>
@@ -55,7 +58,9 @@ const AddAttendance = ({ match, history, sessionId, session, initialFormData, su
                   className="w-full"
                   name="student"
                   component={SelectField}
-                  options={[{ value: studentId, label: `${initialFormData.student.username}` }]}
+                  options={[
+                    { value: studentId, label: `${initialFormData.student.username} (${studentId})` },
+                  ]}
                 />
               </div>
               <div className="mb-4">
