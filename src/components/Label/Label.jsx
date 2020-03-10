@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
+import merge from 'lodash/merge';
 import { getTypeStyle } from 'lib/helpers';
 
-const styles = {
+const defaultStyles = {
   error: {
     main: 'bg-red-500',
     border: 'border-red-400',
@@ -23,18 +24,18 @@ const styles = {
     icon: 'text-green-500',
   },
   info: {
-    main: 'bg-blue-300',
+    main: 'bg-blue-500',
     border: 'border-blue-400',
     text: 'text-blue-700',
     icon: 'text-blue-500',
   },
 };
-const Label = ({ children, type, className }) => {
+const Label = ({ children, type, className, styles }) => {
   return (
     <div
       className={cls(
         className,
-        getTypeStyle(type, styles),
+        getTypeStyle(type, merge(defaultStyles, styles)),
         'px-3',
         'py-1',
         'rounded',
@@ -51,8 +52,11 @@ Label.propTypes = {
   children: PropTypes.any,
   className: PropTypes.string,
   type: PropTypes.oneOf(['error', 'success', 'info', 'warning']),
+  styles: PropTypes.object,
 };
 
-Label.defaultProps = {};
+Label.defaultProps = {
+  type: 'info',
+};
 
 export default Label;
