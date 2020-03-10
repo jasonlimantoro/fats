@@ -92,3 +92,13 @@ export const calculateLabIndexCompleteSchedule = ({ timetables, labs, schedules,
 };
 
 export const wait = (ms = 1000) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const orderByPropertyAlphabetical = (property, method) => (a, b) => {
+  if (a[property] < b[property]) {
+    return method === 'ascending' ? -1 : 1;
+  }
+  if (a[property] > b[property]) {
+    return method === 'ascending' ? 1 : -1;
+  }
+  return 0;
+};

@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { selectDataJS } from '@/entities/selectors';
+import { selectCurrentSemester } from '@/semester/selector';
 import isEmpty from 'lodash/isEmpty';
 import { calculateLabIndexCompleteSchedule } from 'lib/utils';
 
@@ -11,7 +12,8 @@ const selectSessionIdsJS = createSelector(
 
 export const selectTimetable = createSelector(
   selectDataJS,
-  state => {
+  selectCurrentSemester,
+  (state, currentSemester) => {
     if (isEmpty(state.data.timetables) || isEmpty(state.data.schedules)) return [];
     const completeSchedules = calculateLabIndexCompleteSchedule({
       timetables: state.data.timetables,
@@ -19,16 +21,18 @@ export const selectTimetable = createSelector(
       labs: state.data.labs,
       schedules: state.data.schedules,
     });
-    const allTimetables = Object.values(state.data.timetables).reduce((accum, current) => {
-      return {
-        ...accum,
-        [current.lab]: {
-          ...current,
-          lab: state.data.labs[current.lab],
-          completeSchedule: completeSchedules[current.lab].completeSchedule,
-        },
-      };
-    }, {});
+    const allTimetables = Object.values(state.data.timetables)
+      .filter(({ semester }) => semester === currentSemester.id)
+      .reduce((accum, current) => {
+        return {
+          ...accum,
+          [current.lab]: {
+            ...current,
+            lab: state.data.labs[current.lab],
+            completeSchedule: completeSchedules[current.lab].completeSchedule,
+          },
+        };
+      }, {});
     const timeTableByCourse = Object.values(state.data.courses).map(c => {
       return {
         ...c,

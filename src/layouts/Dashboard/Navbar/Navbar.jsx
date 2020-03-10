@@ -3,12 +3,17 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import cls from 'classnames';
 
-const Navbar = ({ onLogout, user, quickLinks, match }) => {
+const Navbar = ({ onLogout, user, quickLinks, match, semester }) => {
   const { url } = match;
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   return (
     <header className="bg-gray-800 text-white sm:flex sm:justify-between items-center py-3 px-4">
+      <div>
+        <p className="font-bold">
+          Semester {semester.number} (AY {semester.year_start}/{semester.year_start + 1})
+        </p>
+      </div>
       <div className="bg-gray-800 flex justify-between items-center" style={{ height: 45 }}>
         <div className="sm:hidden">
           <button
@@ -83,6 +88,7 @@ Navbar.propTypes = {
   onLogout: PropTypes.func.isRequired,
   quickLinks: PropTypes.array,
   match: PropTypes.object.isRequired,
+  semester: PropTypes.object.isRequired,
 };
 
 Navbar.defaultProps = {
