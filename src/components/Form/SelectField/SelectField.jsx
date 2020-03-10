@@ -5,7 +5,7 @@ import cls from 'classnames';
 const selectClass =
   'block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 rounded focus:outline-none focus:bg-white focus:border-gray-500';
 
-const SelectField = ({ field, form: { touched, errors }, options, label, id, ...props }) => {
+const SelectField = ({ field, form: { touched, errors }, options, className, label, id, ...props }) => {
   return (
     <>
       <label className="label label-block" htmlFor={id}>
@@ -13,7 +13,7 @@ const SelectField = ({ field, form: { touched, errors }, options, label, id, ...
       </label>
       <div className="relative">
         <select
-          className={cls(selectClass, {
+          className={cls(className, selectClass, {
             'border-red-500 border': !!(touched[field.name] && errors[field.name]),
           })}
           id={id}
@@ -45,6 +45,7 @@ SelectField.propTypes = {
   form: PropTypes.object.isRequired,
   options: PropTypes.array.isRequired,
   label: PropTypes.string.isRequired,
+  className: PropTypes.string,
   id: PropTypes.string,
 };
 
