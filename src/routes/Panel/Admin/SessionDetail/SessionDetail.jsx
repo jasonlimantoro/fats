@@ -6,12 +6,27 @@ import { deleteAttendance } from '@/ui/sessionDetail/actions';
 import { routes } from 'config/routes';
 import Label from 'components/Label';
 import { reverse } from 'named-urls';
+import { AddIcon, EditIcon, TrashIcon } from 'components/Icons';
 
 const statusToLabelStyle = {
   late: 'warning',
   absent: 'error',
   present: 'success',
 };
+const getAddAttendanceUrl = ({ sessionId, studentId }) => {
+  return reverse(routes.panel.admin.sessions.detail.attendance.add.student, {
+    sessionId,
+    studentId,
+  });
+};
+
+const getEditAttendanceUrl = ({ sessionId, attendanceId }) => {
+  return reverse(routes.panel.admin.sessions.detail.attendance.edit, {
+    sessionId,
+    attendanceId,
+  });
+};
+
 const SessionDetail = ({ id, deleteAttendance, studentList }) => {
   const handleDelete = id => {
     // eslint-disable-next-line no-restricted-globals,no-alert
@@ -35,10 +50,6 @@ const SessionDetail = ({ id, deleteAttendance, studentList }) => {
           </thead>
           <tbody>
             {studentList.map(s => {
-              const attendanceIdUrl = reverse(routes.panel.admin.sessions.detail.attendance.add.student, {
-                sessionId: id,
-                studentId: s.matric,
-              });
               return (
                 <tr key={s.matric}>
                   <td className="border border-gray-400 p-2">{s.matric}</td>
@@ -50,33 +61,37 @@ const SessionDetail = ({ id, deleteAttendance, studentList }) => {
                   </td>
                   <td className="border border-gray-400 p-2">{s.time}</td>
                   <td className="border border-gray-400 p-2">
-                    {s.status !== 'absent' ? (
-                      <button onClick={() => handleDelete(s.attendanceId)} className="text-gray-700">
-                        <svg
-                          className="h-3 w-3 fill-current"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
+                    <div className="flex justify-center">
+                      {s.status !== 'absent' ? (
+                        <>
+                          <button onClick={() => handleDelete(s.attendanceId)} className="text-gray-700 mr-2">
+                            <TrashIcon className="h-6 w-6" />
+                          </button>
+                          <Link
+                            to={getEditAttendanceUrl({ sessionId: id, attendanceId: s.attendanceId })}
+                            className="text-gray-700"
+                          >
+                            <EditIcon className="h-6 w-6" />
+                          </Link>
+                        </>
+                      ) : (
+                        <Link
+                          to={getAddAttendanceUrl({ sessionId: id, studentId: s.matric })}
+                          className="text-gray-700"
                         >
-                          <path d="M6 2l2-2h4l2 2h4v2H2V2h4zM3 6h14l-1 14H4L3 6zm5 2v10h1V8H8zm3 0v10h1V8h-1z" />
-                        </svg>
-                      </button>
-                    ) : (
-                      <Link to={attendanceIdUrl} className="text-gray-700">
-                        <svg
-                          className="h-3 w-3 fill-current"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z" />
-                        </svg>
-                      </Link>
-                    )}
+                          <AddIcon className="h-6 w-6" />
+                        </Link>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+        <p className="text-sm italic">
+          <strong>*late</strong> means student arrives 15 minutes after the lab has started
+        </p>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { routes } from 'config/routes';
 import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import AddAttendance from 'routes/Panel/Admin/AddAttendance';
+import EditAttendance from 'routes/Panel/Admin/EditAttendance';
 import SessionDetail from './SessionDetail';
 import { selectSessionDetailUI, selectStudentList } from '@/ui/sessionDetail/selector';
 import { feedData } from '@/ui/sessionDetail/actions';
@@ -52,6 +53,10 @@ const Routes = ({ match, scheduleDetail, studentList, feedData }) => {
         <Route
           path={String(routes.panel.admin.sessions.detail.attendance.add.student)}
           render={props => <AddAttendance sessionId={sessionId} session={scheduleDetail} {...props} />}
+        />
+        <Route
+          path={routes.panel.admin.sessions.detail.attendance.edit}
+          render={props => <EditAttendance session={scheduleDetail} {...props} />}
         />
       </Switch>
     </div>
