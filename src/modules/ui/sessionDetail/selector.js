@@ -16,7 +16,7 @@ export const selectSessionDetailUI = createSelector(
       course: lab?.course,
       index: lab?.index,
       group: lab?.name,
-      time: moment(schedule.time).format('YYYY-MM-DD HH:mm'),
+      time: moment(schedule.time).format(DATETIME_FORMAT.DATETIME),
     };
   },
 );

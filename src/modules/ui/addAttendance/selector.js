@@ -4,13 +4,15 @@ import isEmpty from 'lodash/isEmpty';
 
 export const selectInitialFormData = createSelector(
   selectDataJS,
-  (_, sessionId) => sessionId,
-  (state, sessionId) => {
-    if (isEmpty(state.data.schedules)) return {};
-    const schedule = state.data.schedules[sessionId];
-    const lab = state.data.labs[schedule.lab];
+  (_, props) => props,
+  ({ data }, { sessionId, studentId }) => {
+    if (isEmpty(data.schedules)) return { lab: '', student: '' };
+    const schedule = data.schedules[sessionId];
+    const lab = data.labs[schedule.lab];
+    const student = data.students[studentId] || {};
     return {
       lab: lab.index,
+      student,
     };
   },
 );
