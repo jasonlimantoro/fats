@@ -38,7 +38,7 @@ const SessionDetail = ({ id, deleteAttendance, studentList }) => {
     <div>
       <div className="mt-6">
         <h2 className="text-semibold text-2xl">List of Students</h2>
-        <table className="table-auto">
+        <table className="table-auto my-4">
           <thead>
             <tr>
               <th>Matriculation Number</th>
@@ -55,7 +55,7 @@ const SessionDetail = ({ id, deleteAttendance, studentList }) => {
                   <td className="border border-gray-400 p-2">{s.matric}</td>
                   <td className="border border-gray-400 p-2">{s.email}</td>
                   <td className="border border-gray-400 p-2 text-center">
-                    <Label type={statusToLabelStyle[s.status]} className="my-2">
+                    <Label type={statusToLabelStyle[s.status]} className="my-2 capitalize">
                       {s.status}
                     </Label>
                   </td>
@@ -89,9 +89,11 @@ const SessionDetail = ({ id, deleteAttendance, studentList }) => {
             })}
           </tbody>
         </table>
-        <p className="text-sm italic">
-          <strong>*late</strong> means student arrives 15 minutes after the lab has started
-        </p>
+        <Label styles={{ info: { main: 'bg-blue-200' } }}>
+          <p className="text-sm text-gray-700 italic">
+            <strong>*late</strong> means student arrives <strong>15 minutes</strong> after the lab has started
+          </p>
+        </Label>
       </div>
     </div>
   );
