@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
-import { getTypeStyle } from 'lib/helpers';
+import { getTypeStyle } from 'lib/utils';
 
 const ModalContext = React.createContext();
 

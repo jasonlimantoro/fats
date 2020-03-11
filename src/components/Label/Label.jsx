@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
 import merge from 'lodash/merge';
-import { getTypeStyle } from 'lib/helpers';
+import { getTypeStyle } from 'lib/utils';
 
 const defaultStyles = {
   error: {

@@ -11,7 +11,7 @@ import {
 } from '@/ui/registerStudent/selector';
 import { SelectField } from 'components/Form';
 import Alert from 'components/Alert';
-import { createArrayToChoiceMapper } from 'lib/helpers';
+import { createArrayToChoiceMapper } from 'lib/utils';
 import { validationSchema, initialValues } from './schema';
 
 const studentMapper = createArrayToChoiceMapper({

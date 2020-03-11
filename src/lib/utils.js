@@ -1,8 +1,11 @@
 import { List } from 'immutable';
 import moment from 'moment';
+import cls from 'classnames';
+import { defaultTypes } from 'config/styles';
 import { generate } from './timetableGenerator';
 
 export const noop = () => {};
+export const identity = x => x;
 export const tryCatch = async (fn, { successFn = noop, errorFn = noop } = {}) => {
   try {
     const res = await fn();
@@ -102,3 +105,25 @@ export const orderByProperty = (property, method = 'ascending') => (a, b) => {
   }
   return 0;
 };
+
+export const getTypeStyle = (type, types = defaultTypes, properties = ['text', 'border', 'main']) => {
+  const typeStyle = types[type];
+  return properties.reduce((accum, current) => cls(accum, typeStyle[current]), '');
+};
+
+export const createArrayToChoiceMapper = ({
+  valueTransform = identity,
+  labelTransform = identity,
+} = {}) => el => ({
+  value: valueTransform(el),
+  label: labelTransform(el),
+});
+
+export const createActionTypes = (actionLists, namespace) =>
+  actionLists.reduce(
+    (actions, a) => ({
+      ...actions,
+      [a]: `${namespace}/${a}`,
+    }),
+    {},
+  );
