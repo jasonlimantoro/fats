@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { toPercentage } from 'lib/utils';
+import { orderByProperty, toPercentage } from 'lib/utils';
 
 const selectDetectionResponse = state => state.camera.get('detectionResponse');
 const selectDetections = state => state.camera.getIn(['detectionResponse', 'detections']);
@@ -11,7 +11,10 @@ export const selectDetectionsJS = createSelector(
 
 export const selectSortedDetectionJS = createSelector(
   selectDetectionsJS,
-  detections => detections.sort((a, b) => a.score > b.score),
+  detections => {
+    const orderByScore = orderByProperty('score', 'descending');
+    return detections.sort(orderByScore);
+  },
 );
 
 const selectDetectionResponseJS = createSelector(

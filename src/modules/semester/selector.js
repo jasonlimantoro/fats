@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import { selectDataJS } from '@/entities/selectors';
-import { orderByPropertyAlphabetical } from 'lib/utils';
+import { orderByProperty } from 'lib/utils';
 
-const orderByFirstWeek = orderByPropertyAlphabetical('first_week', 'descending');
+const orderByFirstWeek = orderByProperty('first_week', 'descending');
 
 export const selectCurrentSemester = createSelector(
   selectDataJS,
