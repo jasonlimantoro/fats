@@ -1,4 +1,5 @@
 import { List } from 'immutable';
+import UIFx from 'uifx';
 import moment from 'moment';
 import cls from 'classnames';
 import { defaultTypes } from 'config/styles';
@@ -127,3 +128,11 @@ export const createActionTypes = (actionLists, namespace) =>
     }),
     {},
   );
+export const createAudio = (src, volume) => {
+  const audio = new UIFx(src);
+  audio.setVolume(volume);
+  const play = volume => {
+    audio.play(volume);
+  };
+  return { audio, play };
+};

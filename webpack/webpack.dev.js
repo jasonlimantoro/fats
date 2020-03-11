@@ -82,6 +82,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: commonPaths.templatePath,
+      favicon: `${commonPaths.imagesAliasFolder}/favicon.ico`,
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',

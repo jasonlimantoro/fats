@@ -32,6 +32,17 @@ module.exports = {
         ],
       },
       {
+        test: /\.(mp3|wav)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              outputPath: commonPaths.audioFolder,
+            },
+          },
+        ],
+      },
+      {
         test: /\.(woff2|ttf|woff|eot)$/,
         use: [
           {
@@ -59,6 +70,7 @@ module.exports = {
     extensions: ['*', '.js', '.jsx', '.css', '.scss'],
     alias: {
       images: commonPaths.imagesAliasFolder,
+      audios: commonPaths.audioAliasFolder,
       '@': commonPaths.moduleDirPath,
     },
   },
