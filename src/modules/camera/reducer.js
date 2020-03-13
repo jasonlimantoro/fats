@@ -36,7 +36,7 @@ const initialState = fromJS({
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.DETECT_BEGIN:
-      return state.set('detectionLoading', true);
+      return state.set('detectionLoading', true).set('detectionLoaded', false);
     case actionTypes.DETECT_SUCCESS:
       return state
         .set('detectionLoading', false)
