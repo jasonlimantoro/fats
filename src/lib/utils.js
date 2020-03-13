@@ -128,7 +128,7 @@ export const createActionTypes = (actionLists, namespace) =>
     }),
     {},
   );
-export const createAudio = (src, volume) => {
+export const createAudio = (src, volume = 0.5) => {
   const audio = new UIFx(src);
   audio.setVolume(volume);
   const play = volume => {
