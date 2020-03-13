@@ -14,11 +14,17 @@ const Routes = ({ match, scheduleDetail, studentList, feedData }) => {
   const {
     params: { sessionId },
   } = match;
-  React.useEffect(
+  const fetchStudentList = React.useCallback(
     () => {
       feedData(sessionId);
     },
     [feedData, sessionId],
+  );
+  React.useEffect(
+    () => {
+      fetchStudentList();
+    },
+    [fetchStudentList],
   );
   const { url } = match;
   return (
@@ -48,7 +54,14 @@ const Routes = ({ match, scheduleDetail, studentList, feedData }) => {
         <Route
           exact
           path={url}
-          render={() => <SessionDetail id={sessionId} studentList={studentList} match={match} />}
+          render={() => (
+            <SessionDetail
+              onRefresh={fetchStudentList}
+              id={sessionId}
+              studentList={studentList}
+              match={match}
+            />
+          )}
         />
         <Route
           path={String(routes.panel.admin.sessions.detail.attendance.add.student)}

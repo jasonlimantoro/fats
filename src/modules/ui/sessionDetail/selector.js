@@ -28,18 +28,29 @@ export const selectStudentList = createSelector(
     if (isEmpty(state.data.schedules)) return [];
     const schedule = state.data.schedules[sessionId];
     const registeredStudents = state.data.labs[schedule.lab].students;
-    const { attendances } = state.data;
     const LATE_LIMIT = 15;
+    const presentStudents = schedule.attendances.reduce((accum, current) => {
+      const attendance = state.data.attendances[current];
+      if (!attendance) {
+        return { ...accum };
+      }
+      const { student } = attendance;
+      return {
+        ...accum,
+        [student]: { ...state.data.attendances[current] },
+      };
+    }, {});
     return registeredStudents.map(current => {
       const student = state.data.students[current];
-      if (student.attendanceId && attendances[student.attendanceId]) {
-        const attendance = attendances[student.attendanceId];
-        const isLate = moment(attendance.created_at).diff(moment(schedule.time), 'minutes') > LATE_LIMIT;
+      const relatedAttendance = presentStudents[current];
+      if (relatedAttendance) {
+        const isLate =
+          moment(relatedAttendance.created_at).diff(moment(schedule.time), 'minutes') > LATE_LIMIT;
         return {
           ...student,
           matric: student.user_id,
           status: isLate ? 'late' : 'present',
-          time: moment(attendance.created_at).format(DATETIME_FORMAT.DATETIME),
+          time: moment(relatedAttendance.created_at).format(DATETIME_FORMAT.DATETIME),
         };
       }
       return {

@@ -6,7 +6,9 @@ import { deleteAttendance } from '@/ui/sessionDetail/actions';
 import { routes } from 'config/routes';
 import Label from 'components/Label';
 import { reverse } from 'named-urls';
-import { AddIcon, EditIcon, TrashIcon } from 'components/Icons';
+import { AddIcon, EditIcon, RefreshIcon, TrashIcon } from 'components/Icons';
+import Spinner from 'components/Spinner';
+import cls from 'classnames';
 
 const statusToLabelStyle = {
   late: 'warning',
@@ -27,7 +29,7 @@ const getEditAttendanceUrl = ({ sessionId, attendanceId }) => {
   });
 };
 
-const SessionDetail = ({ id, deleteAttendance, studentList }) => {
+const SessionDetail = ({ id, deleteAttendance, studentList, onRefresh }) => {
   const handleDelete = id => {
     // eslint-disable-next-line no-restricted-globals,no-alert
     if (confirm('Are you sure you want to delete this attendance?')) {
@@ -37,7 +39,20 @@ const SessionDetail = ({ id, deleteAttendance, studentList }) => {
   return (
     <div>
       <div className="mt-6">
-        <h2 className="text-semibold text-2xl">List of Students</h2>
+        <div className="flex items-center">
+          <h2 className="text-semibold text-2xl">List of Students</h2>
+          <Spinner>
+            {({ spin, toggleSpin }) => (
+              <RefreshIcon
+                onClick={() => {
+                  toggleSpin();
+                  onRefresh();
+                }}
+                className={cls('h-6 w-6 ml-2 cursor-pointer', { spin })}
+              />
+            )}
+          </Spinner>
+        </div>
         <table className="table-auto my-4">
           <thead>
             <tr>
@@ -103,6 +118,7 @@ SessionDetail.propTypes = {
   id: PropTypes.string.isRequired,
   deleteAttendance: PropTypes.func.isRequired,
   studentList: PropTypes.array.isRequired,
+  onRefresh: PropTypes.func.isRequired,
 };
 
 SessionDetail.defaultProps = {};
