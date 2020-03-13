@@ -7,9 +7,10 @@ const initialState = fromJS(state);
 
 const attendanceReducer = (state = {}, action) => {
   if (action.type === actionTypes.ADD_SUCCESS && action.resource === 'attendance') {
-    return state.setIn(
-      ['students', action.payload.entities.attendances[action.payload.result].student, 'attendanceId'],
-      action.payload.result,
+    const newAttendanceId = action.payload.result;
+    const scheduleId = action.payload.entities.attendances[newAttendanceId].schedule;
+    return state.updateIn(['schedules', String(scheduleId), 'attendances'], attendances =>
+      attendances.push(newAttendanceId),
     );
   }
   return state;
