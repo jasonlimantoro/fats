@@ -35,7 +35,8 @@ export default function(state = initialState, action) {
     case actionTypes.UPDATE_BEGIN:
       return state
         .setIn(['status', action.resource, scope.loading], true)
-        .setIn(['status', action.resource, scope.loaded], false);
+        .setIn(['status', action.resource, scope.loaded], false)
+        .setIn(['status', action.resource, scope.error], false);
 
     case actionTypes.FETCH_SUCCESS:
     case actionTypes.DETAIL_SUCCESS:
