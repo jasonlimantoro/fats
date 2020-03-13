@@ -11,7 +11,7 @@ import {
   selectIsAttendanceTaken,
   selectTakeAttendanceError,
 } from '@/ui/camera/selector';
-import { toPercentage, wait } from 'lib/utils';
+import { toPercentage } from 'lib/utils';
 import { debounce } from 'throttle-debounce';
 import Modal from 'components/Modal';
 
@@ -29,6 +29,8 @@ const UPLOAD_HEIGHT = VIDEO_CONSTRAINTS.video.height.ideal;
 const COUNTDOWN = 30;
 const MODAL_DELAY = 5000;
 const ACCURACY_THRESHOLD = 90;
+const ATTENDANCE_TAKING_DEBOUNCE_DELAY = 15000;
+const OBJECT_DETECTION_INTERVAL = 2000;
 
 const Camera = ({
   detect,
@@ -46,36 +48,32 @@ const Camera = ({
   const imageRef = React.useRef(null);
   const drawRef = React.useRef(null);
   const [showModal, setShowModal] = React.useState(false);
-  const [detected, setDetected] = React.useState(null);
   const [countDown, setCountDown] = React.useState(COUNTDOWN);
 
-  // Timeout
-  React.useEffect(
-    () => {
-      const reset = async () => {
-        if (countDown === 0) {
-          setDetected(false);
-          setShowModal(true);
-          await wait(MODAL_DELAY);
-          setCountDown(COUNTDOWN);
-        }
-      };
-      reset();
-    },
-    [countDown, detectionMessage],
-  );
-  // Decreasing timeout count
+  const foundStudent = !!student.username;
+  const isSuccess = isAttendanceTaken && !attendanceError && student.username;
+  const shouldTakeAttendance =
+    detections.length > 0 && toPercentage(detections[0].score) >= ACCURACY_THRESHOLD;
+
   React.useEffect(
     () => {
       const interval = setInterval(() => {
-        if (detected === true || countDown === 0) return;
-        setCountDown(count => count - 1);
+        if (countDown === 0) {
+          setCountDown(COUNTDOWN);
+          setShowModal(true);
+          return;
+        }
+        if (foundStudent) {
+          setCountDown(COUNTDOWN);
+        } else {
+          setCountDown(count => count - 1);
+        }
       }, 1000);
       return () => {
         clearInterval(interval);
       };
     },
-    [countDown, detected],
+    [countDown, foundStudent],
   );
   const startDetection = React.useCallback(
     () => {
@@ -111,51 +109,43 @@ const Camera = ({
         const ctx = drawRef.current.getContext('2d');
         const drawCanvas = drawRef.current;
         ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-        let x = detection.x * drawCanvas.width;
-        const y = detection.y * drawCanvas.height;
-        const width = detection.width * drawCanvas.width - x;
-        const height = detection.height * drawCanvas.height - y;
-        // mirrored
-        x = drawCanvas.width - (x + width);
-        const score = toPercentage(detection.score);
-        ctx.fillText(detection.class_name + ' - ' + score + '%', x + 5, y + 20);
-        ctx.strokeRect(x, y, width, height);
+        const { x, width, y, height, class_name, score } = detection;
+        const mirrored = drawCanvas.width - (x + width);
+        const scorePercent = toPercentage(score);
+        ctx.fillText(class_name + ' - ' + scorePercent + '%', x + 5, y + 20);
+        ctx.strokeRect(mirrored, y, width, height);
       };
       const interval = setInterval(() => {
         if (showModal) return;
-        if (
-          detections.length === 0 ||
-          (detections.length > 0 && toPercentage(detection.score) < ACCURACY_THRESHOLD)
-        ) {
-          startDetection();
-        }
+        startDetection();
         drawBoxes();
-      }, 2000);
+      }, OBJECT_DETECTION_INTERVAL);
       return () => {
         clearInterval(interval);
       };
     },
-    [detections, startDetection, detected, showModal],
+    [detections, startDetection, showModal],
   );
   useDeepCompareEffect(
     () => {
-      const onSuccess = debounce(MODAL_DELAY + 2, false, () => {
-        const foundStudent = !!student.username;
-        setDetected(foundStudent);
-        if (foundStudent && toPercentage(detections[0].score) >= ACCURACY_THRESHOLD) {
-          if (confirm('Taking attendance')) {
+      const onSuccess = debounce(ATTENDANCE_TAKING_DEBOUNCE_DELAY, false, () => {
+        if (shouldTakeAttendance && foundStudent) {
+          setCountDown(COUNTDOWN);
+          if (confirm(`Taking attendance for ${student.username}?`)) {
             take({
               ...attendancePayload,
               student: student.user_id,
             });
-            setCountDown(COUNTDOWN);
             setShowModal(true);
           }
+        }
+        if (detectionMessage) {
+          setShowModal(true);
         }
       });
       onSuccess();
     },
-    [student, take, attendancePayload],
+    [student, take, attendancePayload, foundStudent, shouldTakeAttendance],
   );
   const handleVideo = stream => {
     videoRef.current.srcObject = stream;
@@ -186,7 +176,6 @@ const Camera = ({
     };
   }, []);
 
-  const isSuccess = isAttendanceTaken && !attendanceError && student.username;
   return (
     <div className="flex flex-col items-center px-8">
       <p className="text-2xl font-bold">
@@ -241,6 +230,7 @@ const Camera = ({
         </Modal.Body>
         <Modal.DismissButton>{({ countDown }) => `OK (dismissing in ${countDown}s...)`}</Modal.DismissButton>
       </Modal>
+      Timeout: {countDown}
     </div>
   );
 };
