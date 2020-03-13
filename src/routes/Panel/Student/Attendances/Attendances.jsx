@@ -16,7 +16,7 @@ const Attendances = ({ attendances, feedData }) => {
   return (
     <div>
       <h1 className="text-gray-800 text-3xl font-bold m-0">Overview</h1>
-      <h2 className="text-gray-700 text-2xl font-bold">All attendances</h2>
+      <h2 className="text-gray-700 text-2xl font-bold">All attendances ({attendances.length})</h2>
       <table className="table-fixed w-full mt-4 text-center">
         <thead className="text-gray-600">
           <tr>

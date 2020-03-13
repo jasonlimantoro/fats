@@ -1,4 +1,5 @@
 import { fetch } from '@/entities/actions';
+import { actionTypes } from './constant';
 import { createAttendance, createLab, createSchedule } from 'lib/schema';
 import { selectUser } from '@/auth/auth.selector';
 
@@ -13,14 +14,24 @@ export const feedData = () => async (dispatch, getState) => {
     }),
   );
   dispatch(
-    fetch({
-      resource: 'attendance',
-      schema: [createAttendance()],
-      requestConfig: {
-        queryParams: {
-          user_id: user.user_id,
+    fetch(
+      {
+        resource: 'attendance',
+        schema: [createAttendance()],
+        requestConfig: {
+          queryParams: {
+            user_id: user.user_id,
+          },
         },
       },
-    }),
+      data => {
+        dispatch({
+          type: actionTypes.FEED_DATA,
+          payload: {
+            attendanceIds: data.result,
+          },
+        });
+      },
+    ),
   );
 };
