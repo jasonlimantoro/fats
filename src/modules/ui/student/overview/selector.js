@@ -22,6 +22,21 @@ export const selectAttendances = createSelector(
   },
 );
 
+export const selectMissedAttendancesCount = createSelector(
+  selectDataJS,
+  selectUser,
+  ({ data }, user) => {
+    if (isEmpty(data.students) || isEmpty(data.labs)) return 0;
+    const userData = data.students[user.user_id];
+    const labIds = userData.lab_set;
+    const scheduleCount = labIds.reduce((accum, current) => {
+      const lab = data.labs[current];
+      return accum + lab.schedule_set.length;
+    }, 0);
+    return scheduleCount - userData.attendance_set.length;
+  },
+);
+
 const RECENT_ATTENDANCE_DISPLAY = 5;
 export const selectRecentAttendances = createSelector(
   selectAttendances,
@@ -29,11 +44,6 @@ export const selectRecentAttendances = createSelector(
 );
 
 export const selectTotalAttendancesCount = createSelector(
-  selectAttendances,
-  state => state.length,
-);
-
-export const selectMissedAttendancesCount = createSelector(
   selectAttendances,
   state => state.length,
 );

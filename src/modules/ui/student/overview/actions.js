@@ -10,11 +10,6 @@ export const feedData = () => async (dispatch, getState) => {
     fetch({
       resource: 'lab',
       schema: [createLab()],
-      requestConfig: {
-        queryParams: {
-          user_id: user.user_id,
-        },
-      },
     }),
   );
   dispatch(
