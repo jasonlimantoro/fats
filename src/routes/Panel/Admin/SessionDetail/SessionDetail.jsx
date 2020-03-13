@@ -79,11 +79,14 @@ const SessionDetail = ({ id, deleteAttendance, studentList, onRefresh }) => {
                     <div className="flex justify-center">
                       {s.status !== 'absent' ? (
                         <>
-                          <button onClick={() => handleDelete(s.attendanceId)} className="text-gray-700 mr-2">
+                          <button
+                            onClick={() => handleDelete(s.relatedAttendanceId)}
+                            className="text-gray-700 mr-2"
+                          >
                             <TrashIcon className="h-6 w-6" />
                           </button>
                           <Link
-                            to={getEditAttendanceUrl({ sessionId: id, attendanceId: s.attendanceId })}
+                            to={getEditAttendanceUrl({ sessionId: id, attendanceId: s.relatedAttendanceId })}
                             className="text-gray-700"
                           >
                             <EditIcon className="h-6 w-6" />

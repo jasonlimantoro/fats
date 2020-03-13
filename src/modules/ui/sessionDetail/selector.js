@@ -51,6 +51,7 @@ export const selectStudentList = createSelector(
           matric: student.user_id,
           status: isLate ? 'late' : 'present',
           time: moment(relatedAttendance.created_at).format(DATETIME_FORMAT.DATETIME),
+          relatedAttendanceId: relatedAttendance.id,
         };
       }
       return {
