@@ -36,9 +36,18 @@ export const selectAttendancePayload = createSelector(
   },
 );
 
+const maskAttendanceError = errorMessage => {
+  if (/unique/.test(errorMessage)) {
+    return 'Looks like you have taken attendance for this session';
+  }
+  return errorMessage;
+};
 export const selectTakeAttendanceError = createSelector(
   createSelectStatusJS('attendance', 'create'),
-  status => status?.response?.data?.non_field_errors?.[0] || '',
+  status => {
+    const errorMessage = status?.response?.data?.non_field_errors?.[0] || '';
+    return maskAttendanceError(errorMessage);
+  },
 );
 
 export const selectIsAttendanceTaken = createSelector(
