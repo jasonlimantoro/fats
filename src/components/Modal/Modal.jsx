@@ -16,6 +16,7 @@ const Modal = ({ show, onClose, className, children, type, timeout }) => {
     onFinish: onClose,
     resetOnFinish: true,
     shouldCount: show,
+    shouldReset: !show,
   });
 
   const context = React.useMemo(() => ({ type, onClose, countDown }), [type, onClose, countDown]);
