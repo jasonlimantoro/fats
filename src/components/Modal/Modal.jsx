@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
 import { getTypeStyle } from 'lib/utils';
+import useCountDown from 'lib/hooks/useCountDown';
 
 const ModalContext = React.createContext();
 
@@ -10,30 +11,13 @@ const modalStyle = {
 };
 const getInitialTimeOut = timeout => timeout / 1000;
 const Modal = ({ show, onClose, className, children, type, timeout }) => {
-  const [countDown, setCountDown] = React.useState(() => getInitialTimeOut(timeout));
-  React.useEffect(
-    () => {
-      if (countDown === 0 && show) {
-        onClose();
-        setCountDown(getInitialTimeOut(timeout));
-      }
-    },
-    [countDown, timeout, onClose, show],
-  );
+  const { timer: countDown } = useCountDown({
+    start: getInitialTimeOut(timeout),
+    onFinish: onClose,
+    resetOnFinish: true,
+    shouldCount: show,
+  });
 
-  React.useEffect(
-    () => {
-      const interval = setInterval(() => {
-        if (!timeout || !show) return;
-        setCountDown(count => count - 1);
-      }, 1000);
-      return () => {
-        clearInterval(interval);
-        setCountDown(getInitialTimeOut(timeout));
-      };
-    },
-    [timeout, show],
-  );
   const context = React.useMemo(() => ({ type, onClose, countDown }), [type, onClose, countDown]);
 
   if (!show) return null;
