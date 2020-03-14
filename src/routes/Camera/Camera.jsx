@@ -15,23 +15,7 @@ import { toPercentage } from 'lib/utils';
 import { debounce } from 'throttle-debounce';
 import Modal from 'components/Modal';
 import useCountDown from 'lib/hooks/useCountDown';
-
-const VIDEO_CONSTRAINTS = {
-  audio: false,
-  video: {
-    width: { min: 640, ideal: 1280, max: 1920 },
-    height: { min: 480, ideal: 680, max: 1080 },
-  },
-};
-
-const UPLOAD_WIDTH = VIDEO_CONSTRAINTS.video.width.ideal;
-const UPLOAD_HEIGHT = VIDEO_CONSTRAINTS.video.height.ideal;
-
-const COUNTDOWN = 30;
-const MODAL_DELAY = 5000;
-const ACCURACY_THRESHOLD = 90;
-const ATTENDANCE_TAKING_DEBOUNCE_DELAY = 10000;
-const OBJECT_DETECTION_INTERVAL = 2000;
+import { config } from './config';
 
 const Camera = ({
   detect,
@@ -55,13 +39,13 @@ const Camera = ({
   const foundStudent = !!student.username;
   const isSuccess = isAttendanceTaken && !attendanceError && student.username;
   const shouldTakeAttendance =
-    detections.length > 0 && toPercentage(detections[0].score) >= ACCURACY_THRESHOLD;
+    detections.length > 0 && toPercentage(detections[0].score) >= config.ACCURACY_THRESHOLD;
 
   const handleFinish = React.useCallback(() => {
     setShowModal(true);
   }, []);
   const cameraCountDown = useCountDown({
-    start: COUNTDOWN,
+    start: config.COUNTDOWN,
     onFinish: handleFinish,
     shouldReset: foundStudent,
   });
@@ -85,8 +69,8 @@ const Camera = ({
         videoRef.current.videoHeight,
         0,
         0,
-        UPLOAD_WIDTH,
-        UPLOAD_HEIGHT,
+        config.VIDEO_CONSTRAINTS.video.width.ideal,
+        config.VIDEO_CONSTRAINTS.video.height.ideal,
       );
       imageCanvas.toBlob(file => detect(file, attendancePayload.lab), 'image/jpeg');
     },
@@ -109,7 +93,7 @@ const Camera = ({
         const intervalId = setInterval(() => {
           startDetection();
           drawBoxes();
-        }, OBJECT_DETECTION_INTERVAL);
+        }, config.OBJECT_DETECTION_INTERVAL);
         detectionIntervalRef.current = intervalId;
       } else {
         clearInterval(detectionIntervalRef.current);
@@ -123,7 +107,7 @@ const Camera = ({
   useDeepCompareEffect(
     () => {
       if (shouldTakeAttendance && foundStudent) {
-        const onSuccess = debounce(ATTENDANCE_TAKING_DEBOUNCE_DELAY, false, () => {
+        const onSuccess = debounce(config.ATTENDANCE_TAKING_DEBOUNCE_DELAY, false, () => {
           cameraCountDown.resetTimer();
           if (confirm(`Taking attendance for ${student.username}?`)) {
             take({
@@ -167,7 +151,7 @@ const Camera = ({
   );
   React.useEffect(() => {
     navigator.mediaDevices
-      .getUserMedia(VIDEO_CONSTRAINTS)
+      .getUserMedia(config.VIDEO_CONSTRAINTS)
       .then(handleVideo)
       .catch(handleVideoError);
     const videoDom = videoRef.current;
@@ -201,13 +185,13 @@ const Camera = ({
           <canvas
             ref={drawRef}
             className="absolute"
-            width={VIDEO_CONSTRAINTS.video.width.ideal}
-            height={VIDEO_CONSTRAINTS.video.height.ideal}
+            width={config.VIDEO_CONSTRAINTS.video.width.ideal}
+            height={config.VIDEO_CONSTRAINTS.video.height.ideal}
           />
           <canvas
             ref={imageRef}
-            width={VIDEO_CONSTRAINTS.video.width.ideal}
-            height={VIDEO_CONSTRAINTS.video.height.ideal}
+            width={config.VIDEO_CONSTRAINTS.video.width.ideal}
+            height={config.VIDEO_CONSTRAINTS.video.height.ideal}
           />
         </div>
       </div>
@@ -216,7 +200,7 @@ const Camera = ({
         show={showModal}
         onClose={handleCloseModal}
         type={isSuccess ? 'success' : 'error'}
-        timeout={MODAL_DELAY}
+        timeout={config.MODAL_DELAY}
       >
         <Modal.Header className="mb-4 text-center">
           <p className="font-bold text-2xl">

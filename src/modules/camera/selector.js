@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { orderByProperty, toPercentage } from 'lib/utils';
+import { config } from 'routes/Camera/config';
 
 const selectDetectionResponse = state => state.camera.get('detectionResponse');
 const selectDetections = state => state.camera.getIn(['detectionResponse', 'detections']);
@@ -27,7 +28,7 @@ export const selectDetectedStudent = createSelector(
   ({ student, detections }) => {
     if (!detections[0]) return {};
     const score = toPercentage(detections[0].score);
-    if (score !== 100) return {};
+    if (score <= config.ACCURACY_THRESHOLD) return {};
     return student;
   },
 );
