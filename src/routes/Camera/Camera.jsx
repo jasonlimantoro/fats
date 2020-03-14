@@ -44,11 +44,10 @@ const Camera = ({
 
   const handleFinish = React.useCallback(
     () => {
-      resetDetection();
       resetAttendanceTakingStatus();
       setShowModal(true);
     },
-    [resetDetection, resetAttendanceTakingStatus],
+    [resetAttendanceTakingStatus],
   );
   const cameraCountDown = useCountDown({
     start: config.COUNTDOWN,
@@ -130,13 +129,11 @@ const Camera = ({
           }
         });
         debouncedOnSuccessRef.current = onSuccess;
-      } else if (debouncedOnSuccessRef.current) {
-        debouncedOnSuccessRef.current.cancel();
+      } else {
+        debouncedOnSuccessRef.current?.cancel();
         debouncedOnSuccessRef.current = null;
       }
-      if (debouncedOnSuccessRef.current) {
-        debouncedOnSuccessRef.current();
-      }
+      debouncedOnSuccessRef.current?.();
     },
     [student, take, attendancePayload, foundStudent, shouldTakeAttendance],
   );
