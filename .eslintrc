@@ -22,6 +22,7 @@
     "no-alert": 0,
     "no-restricted-globals": 0,
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "PropTypes" }],
+    "no-unused-expressions": 0,
     "react/prefer-stateless-function": "warn",
     "react/self-closing-comp": [
       "warn",
