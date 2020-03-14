@@ -28,6 +28,7 @@ const scheduleReducer = (state = {}, action) => {
 
 export default function(state = initialState, action) {
   const scope = new ScopedKey(action.scope);
+  const statusPath = ['status', action.resource];
   switch (action.type) {
     case actionTypes.FETCH_BEGIN:
     case actionTypes.DETAIL_BEGIN:
@@ -44,7 +45,6 @@ export default function(state = initialState, action) {
       return state.updateIn(['data'], data => mergeDeep(data, fromJS(action.payload.entities)));
 
     case actionTypes.UPDATE_SUCCESS: {
-      const statusPath = ['status', action.resource];
       return state
         .mergeIn(['data', `${action.resource}s`], fromJS(action.payload.data.entities[`${action.resource}s`]))
         .setIn([...statusPath, scope.loaded], true)
@@ -71,6 +71,12 @@ export default function(state = initialState, action) {
       return state
         .setIn(['status', action.resource, scope.error], fromJS(action.payload))
         .setIn(['status', action.resource, scope.loaded], true);
+    case actionTypes.RESET_STATUS: {
+      return state
+        .setIn([...statusPath, scope.error], false)
+        .setIn([...statusPath, scope.loaded], false)
+        .setIn([...statusPath, scope.loading], false);
+    }
     default:
       return state;
   }

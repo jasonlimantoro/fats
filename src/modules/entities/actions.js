@@ -122,3 +122,9 @@ export const update = (id, body, { resource, shouldNormalize = true, schema } = 
     },
   });
 };
+
+export const resetStatus = ({ resource, scope }) => ({
+  type: actionTypes.RESET_STATUS,
+  resource,
+  scope,
+});

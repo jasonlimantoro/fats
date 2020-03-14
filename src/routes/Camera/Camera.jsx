@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 import { detect, resetDetection } from '@/camera/actions';
 import { selectDetectedStudent, selectDetectionMessage, selectSortedDetectionJS } from '@/camera/selector';
-import { take } from '@/ui/camera/actions';
+import { take, resetAttendanceTakingStatus } from '@/ui/camera/actions';
 import {
   selectActiveSessionDetailJS,
   selectAttendancePayload,
@@ -26,6 +26,7 @@ const Camera = ({
   activeSessionDetail,
   detectionMessage,
   resetDetection,
+  resetAttendanceTakingStatus,
   attendanceError,
   isAttendanceTaken,
 }) => {
@@ -41,13 +42,19 @@ const Camera = ({
   const shouldTakeAttendance =
     detections.length > 0 && toPercentage(detections[0].score) >= config.ACCURACY_THRESHOLD;
 
-  const handleFinish = React.useCallback(() => {
-    setShowModal(true);
-  }, []);
+  const handleFinish = React.useCallback(
+    () => {
+      resetDetection();
+      resetAttendanceTakingStatus();
+      setShowModal(true);
+    },
+    [resetDetection, resetAttendanceTakingStatus],
+  );
   const cameraCountDown = useCountDown({
     start: config.COUNTDOWN,
     onFinish: handleFinish,
     shouldReset: foundStudent,
+    resetOnFinish: true,
   });
   const startDetection = React.useCallback(
     () => {
@@ -226,6 +233,7 @@ Camera.propTypes = {
   detections: PropTypes.array.isRequired,
   student: PropTypes.object.isRequired,
   take: PropTypes.func.isRequired,
+  resetAttendanceTakingStatus: PropTypes.func.isRequired,
   attendancePayload: PropTypes.object.isRequired,
   activeSessionDetail: PropTypes.object.isRequired,
   detectionMessage: PropTypes.string,
@@ -246,7 +254,7 @@ const mapStateToProps = () => state => ({
   isAttendanceTaken: selectIsAttendanceTaken(state),
 });
 
-const mapDispatchToProps = { detect, take, resetDetection };
+const mapDispatchToProps = { detect, take, resetDetection, resetAttendanceTakingStatus };
 export default connect(
   mapStateToProps,
   mapDispatchToProps,

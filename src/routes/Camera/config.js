@@ -6,7 +6,7 @@ export const config = {
       height: { min: 480, ideal: 680, max: 1080 },
     },
   },
-  COUNTDOWN: 30,
+  COUNTDOWN: 15,
   MODAL_DELAY: 5000,
   ACCURACY_THRESHOLD: 90,
   ATTENDANCE_TAKING_DEBOUNCE_DELAY: 10000,
