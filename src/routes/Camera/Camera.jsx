@@ -14,6 +14,7 @@ import {
 import { toPercentage } from 'lib/utils';
 import { debounce } from 'throttle-debounce';
 import Modal from 'components/Modal';
+import useCountDown from 'lib/hooks/useCountDown';
 
 const VIDEO_CONSTRAINTS = {
   audio: false,
@@ -29,7 +30,7 @@ const UPLOAD_HEIGHT = VIDEO_CONSTRAINTS.video.height.ideal;
 const COUNTDOWN = 30;
 const MODAL_DELAY = 5000;
 const ACCURACY_THRESHOLD = 90;
-const ATTENDANCE_TAKING_DEBOUNCE_DELAY = 15000;
+const ATTENDANCE_TAKING_DEBOUNCE_DELAY = 10000;
 const OBJECT_DETECTION_INTERVAL = 2000;
 
 const Camera = ({
@@ -48,33 +49,22 @@ const Camera = ({
   const imageRef = React.useRef(null);
   const drawRef = React.useRef(null);
   const [showModal, setShowModal] = React.useState(false);
-  const [countDown, setCountDown] = React.useState(COUNTDOWN);
+  const detectionIntervalRef = React.useRef();
+  const debouncedOnSuccessRef = React.useRef();
 
   const foundStudent = !!student.username;
   const isSuccess = isAttendanceTaken && !attendanceError && student.username;
   const shouldTakeAttendance =
     detections.length > 0 && toPercentage(detections[0].score) >= ACCURACY_THRESHOLD;
 
-  React.useEffect(
-    () => {
-      const interval = setInterval(() => {
-        if (countDown === 0) {
-          setCountDown(COUNTDOWN);
-          setShowModal(true);
-          return;
-        }
-        if (foundStudent) {
-          setCountDown(COUNTDOWN);
-        } else {
-          setCountDown(count => count - 1);
-        }
-      }, 1000);
-      return () => {
-        clearInterval(interval);
-      };
-    },
-    [countDown, foundStudent],
-  );
+  const handleFinish = React.useCallback(() => {
+    setShowModal(true);
+  }, []);
+  const cameraCountDown = useCountDown({
+    start: COUNTDOWN,
+    onFinish: handleFinish,
+    shouldReset: foundStudent,
+  });
   const startDetection = React.useCallback(
     () => {
       const drawCanvas = drawRef.current;
@@ -115,35 +105,47 @@ const Camera = ({
         ctx.fillText(class_name + ' - ' + scorePercent + '%', x + 5, y + 20);
         ctx.strokeRect(mirrored, y, width, height);
       };
-      const interval = setInterval(() => {
-        if (showModal) return;
-        startDetection();
-        drawBoxes();
-      }, OBJECT_DETECTION_INTERVAL);
+      if (!showModal) {
+        const intervalId = setInterval(() => {
+          startDetection();
+          drawBoxes();
+        }, OBJECT_DETECTION_INTERVAL);
+        detectionIntervalRef.current = intervalId;
+      } else {
+        clearInterval(detectionIntervalRef.current);
+      }
       return () => {
-        clearInterval(interval);
+        clearInterval(detectionIntervalRef.current);
       };
     },
     [detections, startDetection, showModal],
   );
   useDeepCompareEffect(
     () => {
-      const onSuccess = debounce(ATTENDANCE_TAKING_DEBOUNCE_DELAY, false, () => {
-        if (shouldTakeAttendance && foundStudent) {
-          setCountDown(COUNTDOWN);
+      if (shouldTakeAttendance && foundStudent) {
+        const onSuccess = debounce(ATTENDANCE_TAKING_DEBOUNCE_DELAY, false, () => {
+          cameraCountDown.resetTimer();
           if (confirm(`Taking attendance for ${student.username}?`)) {
             take({
               ...attendancePayload,
               student: student.user_id,
             });
             setShowModal(true);
+          } else {
+            resetDetection();
           }
-        }
-        if (detectionMessage) {
-          setShowModal(true);
-        }
-      });
-      onSuccess();
+          if (detectionMessage) {
+            setShowModal(true);
+          }
+        });
+        debouncedOnSuccessRef.current = onSuccess;
+      } else if (debouncedOnSuccessRef.current) {
+        debouncedOnSuccessRef.current.cancel();
+        debouncedOnSuccessRef.current = null;
+      }
+      if (debouncedOnSuccessRef.current) {
+        debouncedOnSuccessRef.current();
+      }
     },
     [student, take, attendancePayload, foundStudent, shouldTakeAttendance],
   );
@@ -230,7 +232,7 @@ const Camera = ({
         </Modal.Body>
         <Modal.DismissButton>{({ countDown }) => `OK (dismissing in ${countDown}s...)`}</Modal.DismissButton>
       </Modal>
-      Timeout: {countDown}
+      Timeout: {cameraCountDown.timer}
     </div>
   );
 };
