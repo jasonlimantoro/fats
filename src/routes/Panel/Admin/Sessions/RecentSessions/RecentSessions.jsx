@@ -10,7 +10,7 @@ import { TrashIcon, ViewIcon } from 'components/Icons';
 const RecentSessions = ({ onDelete, schedules }) => {
   return (
     <div>
-      <p className="text-2xl font-bold">Recent Sessions</p>
+      <p className="text-2xl font-bold">Recent Sessions ({schedules.length})</p>
       <table className="table-auto w-full mt-4 text-center">
         <thead className="text-gray-600">
           <tr>
