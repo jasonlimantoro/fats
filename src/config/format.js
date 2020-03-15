@@ -3,4 +3,5 @@ export const DATETIME_FORMAT = {
   DATE: 'YYYY-MM-DD',
   TIME: 'HH:mm',
   ISO: 'YYYY-MM-DDTHH:mm:ss',
+  HUMAN_DATETIME: 'ddd, Do MMMM YYYY',
 };

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
+import moment from 'moment';
+import { DATETIME_FORMAT } from 'config/format';
 
 const Timetables = ({ timetables, onAddSession }) => {
   return (
@@ -45,7 +47,7 @@ const Timetables = ({ timetables, onAddSession }) => {
                                     'line-through italic text-gray-700': past,
                                   })}
                                 >
-                                  {label} (Week {week}){' '}
+                                  {moment(label).format(DATETIME_FORMAT.HUMAN_DATETIME)} (Week {week}){' '}
                                   <button
                                     onClick={() =>
                                       onAddSession({
