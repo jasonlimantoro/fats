@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { DATETIME_FORMAT } from 'config/format';
 
 const range = (start, stop, step = 1) =>
   Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
@@ -26,7 +27,7 @@ export const generate = timetable => {
     return {
       time: moment(firstLabMoment)
         .add(w - 1, 'weeks')
-        .format('YYYY-MM-DD'),
+        .format(DATETIME_FORMAT.DATE),
       week: ntuweek[idx],
     };
   });
