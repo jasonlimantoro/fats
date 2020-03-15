@@ -15,6 +15,8 @@ import { toPercentage } from 'lib/utils';
 import { debounce } from 'throttle-debounce';
 import Modal from 'components/Modal';
 import useCountDown from 'lib/hooks/useCountDown';
+import moment from 'moment';
+import { DATETIME_FORMAT } from 'config/format';
 import { config } from './config';
 
 const Camera = ({
@@ -119,6 +121,7 @@ const Camera = ({
             take({
               ...attendancePayload,
               student: student.user_id,
+              created_at: moment().format(DATETIME_FORMAT.DATETIME),
             });
             setShowModal(true);
           } else {

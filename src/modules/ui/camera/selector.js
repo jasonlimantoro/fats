@@ -1,7 +1,5 @@
 import { createSelector } from 'reselect';
 import { selectDataJS, createSelectStatusJS } from '@/entities/selectors';
-import moment from 'moment';
-import { DATETIME_FORMAT } from 'config/format';
 
 const selectActiveSession = state => state.ui.camera.get('activeSession');
 
@@ -31,7 +29,6 @@ export const selectAttendancePayload = createSelector(
     return {
       lab: data.timetables[activeSession.timetable].lab,
       schedule: activeSession.schedule,
-      created_at: moment().format(DATETIME_FORMAT.ISO),
     };
   },
 );
