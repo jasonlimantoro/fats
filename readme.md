@@ -11,28 +11,16 @@ Face-recognition-based Attendance Taking System
 
 > Note that fats_backend app must also run in order for this to work
 
-1. Clone repository
+1. Install dependencies
 
-```
-git clone https://github.com/jasonlimantoro/fats.git
-```
-
-2. `cd` into the right directory
-
-```
-cd fats
-```
-
-3. Install dependencies
-
-```
+```bash
 yarn install
 ```
 
-4. Run the app
+2. Run the app
 
-```
+```bash
 yarn start
 ```
 
-5. Open browser in `http://localhost:8080`
+3. Open browser in `http://localhost:8080`
